@@ -1,0 +1,6 @@
+#Ignore vsFile
+.vscode
+.json
+.docx
+.exe
+.o
