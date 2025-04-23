@@ -1,8 +1,14 @@
 #include <stdio.h>
+#include "src/structuras.h"
+
+#define MAX_PACIENTES 100
 
 void main()
 {
     int opcion;
+    Paciente const pacientes[MAX_PACIENTES];//arreglo de pacientes, con direcion de memoria fija
+    size_t tamanoP = 0; //control del tamano del arreglo de Pacientes
+
     do
     {
 
@@ -17,6 +23,8 @@ void main()
         switch(opcion)
         {
             case 1:
+                if(tamanoP < MAX_PACIENTES)
+                    leerPacientes(pacientes, &tamanoP);
                 break;
             case 2:
                 break;
