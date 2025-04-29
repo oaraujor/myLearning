@@ -1,21 +1,21 @@
 #include <stdio.h>
-#include "structuras.h"
-#include "utilidades.h"
 #include <string.h>
 #include <stdbool.h>
+#include <stdlib.h>
+#include "structuras.h"
+#include "utilidades.h"
 
 #define VALIDAR_RANGO(ptr, min, max) (*(ptr) >= (min) && *(ptr) <= (max)) //remplazo a funciones de validar opcion
-
 
 void leerPaciente(Paciente *pacientes, size_t *tamano)
 {
     Paciente *pacienteActual;
     bool continuar;
 
-    printf("\tAlta de PAcientes\n");
-
+    
     do
     {
+        printf("\tAlta de Pacientes\n");
         pacienteActual = pacientes + *(tamano);
 
         leerEntero("Servcio (0 - Consulta | 1 - Emergencia): ", &pacienteActual->servicio, 0, 1);
@@ -23,13 +23,13 @@ void leerPaciente(Paciente *pacientes, size_t *tamano)
         leerDireccion(&pacienteActual->direccionP);
         leerEntero("Edad (1-100):", &pacienteActual->edad, 1, 100);
         leergenero(&pacienteActual->genero);
-        leerSintomas(pacienteActual->sintomas);
-        leerConsultorio(&pacienteActual->numConsultorios);
-
-        continuar = contAgreg("alumno");
+        //leerSintomas(pacienteActual->sintomas);
+        leerEntero("Numero de consultorio disponible (1-50): ", &pacienteActual->numConsultorios, 1, 50);
+        //guardar paciente();
+        continuar = contAgreg("paciente");
         if(continuar == true)
             *(tamano)++;
-    }while(continuar && *(tamano) < 100);
+    }while(continuar && *(tamano) < 50);
 }
 
 void leerEntero(const char* mensaje, int *numero, int min, int max)
@@ -82,7 +82,7 @@ void leerDireccion(Direccion *direccion)
     leerCadena("Estado: ", direccion->estado);
 }
 
-void leergenero(char *genero)
+void leerGenero(char *genero)
 {
     char entrada;
     bool valido;
@@ -102,9 +102,34 @@ void leergenero(char *genero)
     }while(!valido);
 }
 
-void leerSintomas(int *idPaciente, )
+void leerSintomas(int *idPaciente, char *dir)
 {
-    return;//
+    return;//data/id.dat
 }
 
+bool contAgreg(const char *persona)
+{
+    char seguir[3];
+    int i;
 
+    do
+    {
+        printf("¿Desea agregar otro %s? (Si/No): ", persona);
+        fflush(stdin);
+        gets(seguir);
+        i = 0;
+        while (seguir[i] != '\0')
+        {
+            seguir[i] = tolower(seguir[i]);
+            i++;
+        }
+        if (strcmp(seguir, "si") != 0 && strcmp(seguir, "no") != 0)
+            printf("\033[31mIngrese si/no.\033[0m\a\n");
+
+    } while (strcmp(seguir, "si") != 0 && strcmp(seguir, "no") != 0);  // Sale si la respuesta es "si" o "no"
+
+    if(strcmp(seguir, "si") == 0)
+        return true;
+    else
+        return false;  // Retorna true si es "si", false si es "no"
+}
