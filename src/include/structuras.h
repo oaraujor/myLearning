@@ -13,13 +13,13 @@ typedef struct
 } Direccion;
 
 typedef struct
-{
+{      
     int servicio; //1 consulta, 0 emergencia
     char nombre[100];
     Direccion direccionP;
     int edad; //validar < 100
     char genero; //M masculino, //F femenino
-    //sintomas
+    char sintomas; // direccion del archivo
     int numConsultorios;
     
 } Paciente;

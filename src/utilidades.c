@@ -1,28 +1,30 @@
 #include <stdio.h>
 #include "structuras.h"
+#include "utilidades.h"
 #include <string.h>
 #include <stdbool.h>
 
 #define VALIDAR_RANGO(ptr, min, max) (*(ptr) >= (min) && *(ptr) <= (max)) //remplazo a funciones de validar opcion
 
-void leerPaciente(Paciente const *pacientes, size_t *tamano)
+
+void leerPaciente(Paciente *pacientes, size_t *tamano)
 {
     Paciente *pacienteActual;
     bool continuar;
 
-    printf("\tAlumnos\n");
+    printf("\tAlta de PAcientes\n");
 
     do
     {
         pacienteActual = pacientes + *(tamano);
 
-        leerEntero("Servio (0 - Consulta | 1 - Emergencia): ", &pacienteActual->servicio, 0, 1);
+        leerEntero("Servcio (0 - Consulta | 1 - Emergencia): ", &pacienteActual->servicio, 0, 1);
         leerCadena("Nombre de Paciente: ", pacienteActual->nombre);
         leerDireccion(&pacienteActual->direccionP);
-        leerEntero("Edad (1-100):", &alumnoActual->edad, 1, 100);
-        leergenero();
-        leerSintomas();
-        leerConsultorio();
+        leerEntero("Edad (1-100):", &pacienteActual->edad, 1, 100);
+        leergenero(&pacienteActual->genero);
+        leerSintomas(pacienteActual->sintomas);
+        leerConsultorio(&pacienteActual->numConsultorios);
 
         continuar = contAgreg("alumno");
         if(continuar == true)
@@ -44,15 +46,16 @@ void leerEntero(const char* mensaje, int *numero, int min, int max)
 void leerCadena(const char *mensaje, char *cadena)
 {
     int i;
+    char buffer[50];
     bool esValida = true;
 
     do
     {
         printf(mensaje);
         fflush(stdin);
-        gets(cadena);
+        fgets(buffer, sizeof(buffer), stdin);
         i = 0;
-        while(cadena[i] != '\0' && esValida)
+        while(cadena[i] != '\0' && esValida && i < 50)
         {
             if(!((cadena[i] >= 'a' && cadena[i] <= 'z') || (cadena[i] >= 'A' && cadena[i] <= 'Z') || cadena[i] == ' '))
                 esValida = false;
@@ -60,63 +63,48 @@ void leerCadena(const char *mensaje, char *cadena)
         }
         if(!esValida)
             printf("\033[31m%s Invalida\033[0m\n\a", mensaje);
+        else
+            strcpy(cadena, buffer);
     } while(!esValida); 
 }
 
 void leerDireccion(Direccion *direccion)
 {
-    Direccion direccionPaciente;
-
     printf("Direccion:\n");
-    do
-    {
-        printf("Calle (50 Char): ");
-        gets(direccionPaciente.calle); //50
-        if(!strlen(direccionPaciente.calle < 50));
-            printf("\033[31mIngrese un estado valido.\033[0m\a\n");
-    }while(!strlen(direccionPaciente.estado < 50));
 
+    leerCadena("Calle: ", direccion->calle);
+    
     printf("Numero: "); //ver si se puede validar de alguna forma
-    scanf("%d", direccionPaciente.numero);
+    scanf("%d", &direccion->numero);
+    
+    leerCadena("Colonia: ", direccion->colonia);
+    leerCadena("Municipio : ", direccion->municipio);
+    leerCadena("Estado: ", direccion->estado);
+}
+
+void leergenero(char *genero)
+{
+    char entrada;
+    bool valido;
 
     do
     {
-        printf("Colonia (50 Char): ");
-        gets(direccionPaciente.colonia);//50
-        if(!strlen(direccionPaciente.colonia < 50));
-            printf("\033[31mIngrese un estado valido.\033[0m\a\n");
-    }while(!strlen(direccionPaciente.colonia) < 50);
+        printf("\tGenero (M/F): ");
+        scanf(" %c", &entrada);
 
-    do
-    {
-        printf("Municipio (50 Char): ");
-        gets(direccionPaciente.municipio);//50
-        if(!strlen(direccionPaciente.municipio < 50));
-            printf("\033[31mIngrese un municipio valido.\033[0m\a\n");
-    }while(!strlen(direccionPaciente.municipio));
+        valido = (entrada == 'M' || entrada == 'F' || entrada == 'm' || entrada == 'f');
 
-    do
-    {
-        printf("Estado (50 Char):");
-        gets(direccionPaciente.estado);//50
-        if(!strlen(direccionPaciente.estado < 50));
-        printf("\033[31mIngrese un estado valido.\033[0m\a\n");
-    }while(!strlen(direccionPaciente.estado < 50));
-    *direccion = direccionPaciente;
+        if(valido)
+            *genero = (entrada >= 'a') ? entrada - 32 : entrada;
+        else
+            printf("\033[31mGenero Invalido. Solo M o F.\033[0m\n\a}");
+
+    }while(!valido);
 }
 
-void leergenero(void)
+void leerSintomas(int *idPaciente, )
 {
-    return; //falta
+    return;//
 }
 
-void leerSintomas()
-{
-    return; //falta
-}
-
-void leerConsultorio()
-{
-    return; //falta
-}
 
