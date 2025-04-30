@@ -2,34 +2,49 @@
 #include <string.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <ctype.h>
+
 #include "structuras.h"
 #include "utilidades.h"
+#include "controlArchivos.h"
 
 #define VALIDAR_RANGO(ptr, min, max) (*(ptr) >= (min) && *(ptr) <= (max)) //remplazo a funciones de validar opcion
 
 void leerPaciente(Paciente *pacientes, size_t *tamano)
 {
     Paciente *pacienteActual;
-    bool continuar;
+    bool continuar, errorSint;
 
     
     do
     {
-        printf("\tAlta de Pacientes\n");
+        system("clear");
+        printf("\tAlta de Pacientes - Pacientes ingresados: %zu/50\n", tamano);
         pacienteActual = pacientes + *(tamano);
-
+        
         leerEntero("Servcio (0 - Consulta | 1 - Emergencia): ", &pacienteActual->servicio, 0, 1);
         leerCadena("Nombre de Paciente: ", pacienteActual->nombre);
+        generarFolio(&pacienteActual->folio, pacienteActual->nombre);
         leerDireccion(&pacienteActual->direccionP);
         leerEntero("Edad (1-100):", &pacienteActual->edad, 1, 100);
         leergenero(&pacienteActual->genero);
-        //leerSintomas(pacienteActual->sintomas);
-        leerEntero("Numero de consultorio disponible (1-50): ", &pacienteActual->numConsultorios, 1, 50);
-        //guardar paciente();
+        leerEntero("Numero de consultorio disponible (1-50): ", &pacienteActual->numConsultorios, 1, 50);//<------------------------------------
+
+        errorSint = leerSintomas(pacienteActual->sintomas, pacienteActual->folio);
+        if(errorSint)
+        {
+            printf("Sintomas registrados correctamente");
+            guardarPaciente(pacienteActual);//por ver <--------------------------------
+            printf("El paciente ha sido registrado correctamente\n");
+            printf("FOLIO: %s\n", pacienteActual->folio);
+        }
+        else
+            printf("Ocurrio un error al ingresar los sintomas");
+
         continuar = contAgreg("paciente");
         if(continuar == true)
             *(tamano)++;
-    }while(continuar && *(tamano) < 50);
+    }while(continuar && *(tamano) < MAX_PACIENTES);
 }
 
 void leerEntero(const char* mensaje, int *numero, int min, int max)
@@ -45,27 +60,81 @@ void leerEntero(const char* mensaje, int *numero, int min, int max)
 
 void leerCadena(const char *mensaje, char *cadena)
 {
-    int i;
-    char buffer[50];
-    bool esValida = true;
+    char buffer[MAX_CADENA];
+    char limpio[MAX_CADENA];
+    bool esValida;
+    int inicio, fin, j, i;
+    bool espacioPrevio;
+    bool nuevaPalabra;
 
     do
     {
-        printf(mensaje);
+        esValida = true;
+        printf("%s", mensaje);
         fflush(stdin);
         fgets(buffer, sizeof(buffer), stdin);
-        i = 0;
-        while(cadena[i] != '\0' && esValida && i < 50)
+
+        buffer[strcspn(buffer, "\n")] = '\0';
+
+
+        inicio = 0, fin = strlen(buffer) - 1;
+        while(isspace((unsigned char)buffer[inicio]))
+            inicio++;
+        while(fin >= inicio && isspace((unsigned char)buffer[fin]))
+            fin--;
+
+        j = 0;
+        espacioPrevio = false;
+        i = inicio;
+        while(i <= fin && esValida)
         {
-            if(!((cadena[i] >= 'a' && cadena[i] <= 'z') || (cadena[i] >= 'A' && cadena[i] <= 'Z') || cadena[i] == ' '))
-                esValida = false;
+            if (isspace((unsigned char)buffer[i]))
+            {
+                if (!espacioPrevio)
+                {
+                    limpio[j] = ' ';
+                    j++;
+                    espacioPrevio = true;
+                }
+            }
+            else
+            {
+                if(!isalpha((unsigned char)buffer[i]))
+                    esValida = false;
+                else
+                {
+                    limpio[j] = buffer[i];
+                    j++;
+                    espacioPrevio = false;
+                }
+            }
             i++;
         }
-        if(!esValida)
+
+        limpio[j] = '\0';
+
+        if (!esValida || strlen(limpio) == 0)
             printf("\033[31m%s Invalida\033[0m\n\a", mensaje);
         else
-            strcpy(cadena, buffer);
-    } while(!esValida); 
+        {
+            // Capitalizar la primera letra de cada palabra
+            nuevaPalabra = true;
+            i = 0;
+            while(limpio[i] != '\0')
+            {
+                if (isspace((unsigned char)limpio[i]))
+                    nuevaPalabra = true;
+                else
+                {
+                    limpio[i] = nuevaPalabra ? toupper(limpio[i]) : tolower(limpio[i]);
+                    nuevaPalabra = false;
+                }
+                i++;
+            }
+            strcpy(cadena, limpio);
+        }
+
+    }while(!esValida);
 }
 
 void leerDireccion(Direccion *direccion)
@@ -74,7 +143,7 @@ void leerDireccion(Direccion *direccion)
 
     leerCadena("Calle: ", direccion->calle);
     
-    printf("Numero: "); //ver si se puede validar de alguna forma
+    printf("Numero: ");
     scanf("%d", &direccion->numero);
     
     leerCadena("Colonia: ", direccion->colonia);
@@ -102,9 +171,55 @@ void leerGenero(char *genero)
     }while(!valido);
 }
 
-void leerSintomas(int *idPaciente, char *dir)
+bool leerSintomas(char *sintomas, char *folio)
 {
-    return;//data/id.dat
+    FILE *archivoFolio; 
+    int i, j;
+    bool continuar, exitoSintomas;
+    
+    i = 0;
+    while(DIR_BASE[i] != '\0')
+    {
+        sintomas[i] = DIR_BASE[i];
+        i++;
+    }
+    j = 0;
+    while(folio[j] != '\0' && i < MAX_DIR-1)
+    {
+        sintomas[i] = folio[j];
+        i++;
+        j++;
+    }
+    j = 0;
+    while(EXTENSION_P[j] != '\0' && i < MAX_DIR-1)
+    {
+        sintomas[i] = EXTENSION_P[j];
+        i++;
+        j++;
+    }
+
+    sintomas[i] = '\0';
+
+    archivoFolio = fopen(sintomas, "w");
+    if(archivoFolio == NULL)
+        exitoSintomas = false;
+    else
+    {
+        char linea[1024];
+        continuar = true;
+        printf("Ingrese los sintomas del paciente. Ingrese FIN en una nueva linea para terminar: \n");
+        while(continuar && fgets(linea, sizeof(linea), stdin))
+        {
+            if(strcmp(linea, "FIN\n") == 0 || strcmp(linea, "FIN\r\n") == 0)
+                continuar = false;
+            else
+                fputs(linea, archivoFolio);
+        }
+        exitoSintomas = true;
+    }
+
+    fclose(archivoFolio);
+    return exitoSintomas;
 }
 
 bool contAgreg(const char *persona)
@@ -126,10 +241,40 @@ bool contAgreg(const char *persona)
         if (strcmp(seguir, "si") != 0 && strcmp(seguir, "no") != 0)
             printf("\033[31mIngrese si/no.\033[0m\a\n");
 
-    } while (strcmp(seguir, "si") != 0 && strcmp(seguir, "no") != 0);  // Sale si la respuesta es "si" o "no"
+    } while (strcmp(seguir, "si") != 0 && strcmp(seguir, "no") != 0);
 
     if(strcmp(seguir, "si") == 0)
         return true;
     else
-        return false;  // Retorna true si es "si", false si es "no"
+        return false;
 }
+
+void generarFolio(char *folio, const char *nombre)
+{
+    int i = 0, j = 0;
+
+    while(nombre[i] != '\0')
+    {
+        if((nombre[i] >= 'A' && nombre[i] <= 'Z') && j < MAX_FOLIO-1)
+        {
+            folio[j] = nombre[i];
+            j++;
+        }
+        i++;
+    }
+
+    if(j < MAX_FOLIO-1)
+        folio[j] = '-';
+        j++;
+
+    srand(time(NULL));
+
+    while(j < MAX_FOLIO-1)
+    {
+        folio[j] = '0' + (rand() % 10);
+        j++;
+    }
+    folio[j] = '\0';
+}
+
+//<-------------------- falta lo de los consultorios

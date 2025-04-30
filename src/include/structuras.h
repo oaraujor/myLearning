@@ -1,31 +1,33 @@
 #ifndef STRUCTURAS
 #define STRUCTURAS
 
-#include <stdio.h>
+#define MAX_CADENA 50
+#define MAX_PACIENTES 50
+#define MAX_DIR 34
+#define MAX_FOLIO 15
+#define DIR_BASE "data/pacientes/"
+#define EXTENSION_P ".txt"
+
 
 typedef struct
 {
-    char calle[50];
+    char calle[MAX_CADENA];
     int numero;
-    char colonia[50];
-    char municipio[50];
-    char estado[50];
+    char colonia[MAX_CADENA];
+    char municipio[MAX_CADENA];
+    char estado[MAX_CADENA];
 } Direccion;
 
 typedef struct
 {      
-    int servicio; //1 consulta, 0 emergencia
-    char nombre[50];
+    char folio[MAX_FOLIO];
+    int servicio;
+    char nombre[MAX_CADENA];
     Direccion direccionP;
-    int edad; //validar < 100
-    char genero; //M masculino, //F femenino
-    char sintomas[20]; // direccion del archivo
-    /*sintomas tendra una cadena con la ruta a la
-    carpeta data/p/ donde se almacenaran los archivos
-    de texto donde se tendra la redaccion de los 
-    sintomas. Esto para no tener un char de mas
-    de 100 y hacerlo mas facil de leer y actualizar*/
-    int numConsultorios;
+    int edad;
+    char genero;
+    char sintomas[MAX_DIR];
+    int numConsultorios; //<-------------------------------------
 } Paciente;
 
 #endif

@@ -1,18 +1,12 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "src/include/structuras.h"
 #include "src/include/utilidades.h"
 #include "src/include/controlArchivos.h"
 
-
-#define ARCHIVO_PACIENTES "data/pacientes.dat"
-#define MAX_PACIENTES 100
-
 int main()
 {
     int opcion, verifArchivo;
-    Paciente pacientes[MAX_PACIENTES];//arreglo de pacientes, con direcion de memoria fija
-    size_t tamanoP = 0; //control del tamano del arreglo de Pacientes
+    Paciente pacientes[MAX_PACIENTES];
+    size_t tamanoP = 0;
 
     verifArchivo = iniArchivoP();
     /*Probablemente iniArchivo se elimine o edite, para checar si el archivo

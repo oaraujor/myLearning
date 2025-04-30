@@ -4,10 +4,11 @@
 #include "structuras.h"
 #include "controlArchivos.h"
 
-void actualizarPacientes(Paciente *);
 void listarPacientes();
-bool buscarEditarPacientes();
 void eliminarPacientes();
+void guardarPaciente(Paciente *);
+
+bool buscarEditarPacientes();
 bool iniArchivoP(void);
 
 

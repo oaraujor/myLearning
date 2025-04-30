@@ -6,23 +6,6 @@
 
 #define ARCHIVO_PACIENTES "data/pacientes.dat"
 
-void guardarPaciente(Paciente *paciente)//tentativo
-{
-    /*definir si vamos a guardar uno por uno, o todo junto*/
-    FILE *archivo = fopen(ARCHIVO_PACIENTES, "a");
-
-    if(archivo != NULL)
-    {
-        fwrite(paciente, sizeof(Paciente), 1, archivo);
-        fclose(archivo);
-        printf("\033[32mPaciente registrado correctamente.\033[0m\n");
-    }
-    else
-    {
-        printf("\033[31mERROR al abrir archivo para guardar paciente.\033[0m\n");
-    }
-}
-
 void listarPacientes()//tentativo
 {
     FILE *archivo = fopen(ARCHIVO_PACIENTES, "r");
@@ -142,11 +125,11 @@ void eliminarPacientes() //tentativo
     }
 }
 
-bool iniArchivoP(void)
+bool iniArchivoP(void) //tentativo
 {
     FILE *archivo;
     int i;
-    Paciente p = {0,"",{"",0,"","",""},0,'0',"",0};
+    Paciente p = {"", 0,"",{"",0,"","",""},0,'0',"",0};
 
     archivo = fopen(ARCHIVO_PACIENTES, "wb");
 
@@ -159,4 +142,18 @@ bool iniArchivoP(void)
         fclose(archivo);
         return true;
     }
+}
+
+void guardarPaciente(Paciente *paciente) //tentativo
+{
+    FILE *archivo = fopen(ARCHIVO_PACIENTES, "a");
+
+    if(archivo != NULL)
+    {
+        fwrite(paciente, sizeof(Paciente), 1, archivo);
+        fclose(archivo);
+        printf("\033[32mPaciente registrado correctamente.\033[0m\n");
+    }
+    else
+        printf("\033[31mERROR al abrir archivo para guardar paciente.\033[0m\n");
 }
