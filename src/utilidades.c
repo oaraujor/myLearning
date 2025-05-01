@@ -15,19 +15,18 @@ void leerPaciente(Paciente *pacientes, size_t *tamano)
     Paciente *pacienteActual;
     bool continuar, errorSint;
 
-    
     do
     {
-        system("clear");
-        printf("\tAlta de Pacientes - Pacientes ingresados: %zu/50\n", tamano);
+        system("cls");
+        printf("\tAlta de Pacientes - Pacientes ingresados: %zu/50\n", *tamano);
         pacienteActual = pacientes + *(tamano);
         
         leerEntero("Servcio (0 - Consulta | 1 - Emergencia): ", &pacienteActual->servicio, 0, 1);
         leerCadena("Nombre de Paciente: ", pacienteActual->nombre);
-        generarFolio(&pacienteActual->folio, pacienteActual->nombre);
+        generarFolio(pacienteActual->folio, pacienteActual->nombre);
         leerDireccion(&pacienteActual->direccionP);
         leerEntero("Edad (1-100):", &pacienteActual->edad, 1, 100);
-        leergenero(&pacienteActual->genero);
+        leerGenero(&pacienteActual->genero);
         leerEntero("Numero de consultorio disponible (1-50): ", &pacienteActual->numConsultorios, 1, 50);//<------------------------------------
 
         errorSint = leerSintomas(pacienteActual->sintomas, pacienteActual->folio);
@@ -117,7 +116,6 @@ void leerCadena(const char *mensaje, char *cadena)
             printf("\033[31m%s Invalida\033[0m\n\a", mensaje);
         else
         {
-            // Capitalizar la primera letra de cada palabra
             nuevaPalabra = true;
             i = 0;
             while(limpio[i] != '\0')
@@ -249,7 +247,7 @@ bool contAgreg(const char *persona)
         return false;
 }
 
-void generarFolio(char *folio, const char *nombre)
+void generarFolio(char *folio, char *nombre)
 {
     int i = 0, j = 0;
 

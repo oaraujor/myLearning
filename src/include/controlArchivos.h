@@ -10,6 +10,8 @@ void guardarPaciente(Paciente *);
 
 bool buscarEditarPacientes();
 bool iniArchivoP(void);
+bool cargarPacientes(Paciente *, size_t *);
+
 
 
 #endif

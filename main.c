@@ -1,65 +1,59 @@
-#include "src/include/structuras.h"
-#include "src/include/utilidades.h"
-#include "src/include/controlArchivos.h"
+#include "structuras.h"
+#include "utilidades.h"
+#include "controlArchivos.h"
+
+#include <stdio.h>
+#include <stdbool.h>
 
 int main()
 {
-    int opcion, verifArchivo;
+    int opcion;
+    bool verifArchivo;
     Paciente pacientes[MAX_PACIENTES];
-    size_t tamanoP = 0;
+    size_t tamanoP;
 
-    verifArchivo = iniArchivoP();
-    /*Probablemente iniArchivo se elimine o edite, para checar si el archivo
-    ya tiene datos. Si ya existe el archivo y contiene datos, se deberan de
-    cargar los datos al arreglo y actualizar el tamano sin inicializarlo en 0,
-    e inicializar el tamano. Si el programa es ejetutado por primera vez, normal*/
-    if(!verifArchivo)
-        printf("Error al abrir el registro de pacientes\n");
-    else
+    if (cargarPacientes(pacientes, &tamanoP) != false)
     {
         do
         {
-            system("clear");
             printf("\tMENU\n");
             printf("1) Alta de Pacientes\n");
             printf("2) Busqueda o edicion de paciente\n");
             printf("3) Listado de pacientes\n");
             printf("4) Baja de paciente\n");
             printf("5) Salir\n");
+            
+            scanf("%d", &opcion);
     
             switch(opcion)
             {
                 case 1:
-                    system("clear");
                     if(tamanoP < MAX_PACIENTES)
-                        leerPacientes(pacientes, &tamanoP);
+                        leerPaciente(pacientes, &tamanoP);
                     else
                         printf("ERROR: Maxima capacidad de pacientes!\n");    
                     break;
                 case 2:
-                    system("clear");
                     buscarEditarPacientes();
                     break;
                 case 3:
-                    system("clear");
                     listarPacientes();
                     break;
                 case 4:
-                    system("clear");
                     eliminarPacientes();
                     break;
                 case 5:
-                    system("clear");
                     printf("Saliendo del programa...\n");
                     break;
                 default:
-                    system("clear");
                     printf("Opcion no valida");
                     break;
     
             }
         }while(opcion != 5);
     }
+    else
+        printf("ERROR: Algo salio mal al inicar el programa.\n");
 
     return 0;
 

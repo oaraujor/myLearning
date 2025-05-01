@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
-#include "src/include/structuras.h"
-#include "src/include/controlArchivos.h"
+#include "structuras.h"
+#include "controlArchivos.h"
 
 #define ARCHIVO_PACIENTES "data/pacientes.dat"
 
@@ -41,8 +41,9 @@ void listarPacientes()//tentativo
     }
 }
 
-bool buscarEditarPacientes()//tentativo
+bool buscarEditarPacientes()//por hacer
 {
+    /*
     FILE *archivo = fopen(ARCHIVO_PACIENTES, "r+b");
     Paciente paciente;
     int idBuscar;
@@ -87,10 +88,12 @@ bool buscarEditarPacientes()//tentativo
     }
 
     return encontrado;
+    */
 }
 
 void eliminarPacientes() //tentativo
 {
+    /*
     FILE *archivo = fopen(ARCHIVO_PACIENTES, "rb");
     FILE *temp = fopen("temp.txt", "wb");
     Paciente paciente;
@@ -123,30 +126,34 @@ void eliminarPacientes() //tentativo
     {
         printf("\033[31mError al procesar archivos.\033[0m\n");
     }
+    */
 }
 
-bool iniArchivoP(void) //tentativo
+bool iniArchivoP(void)
 {
     FILE *archivo;
     int i;
-    Paciente p = {"", 0,"",{"",0,"","",""},0,'0',"",0};
+    Paciente p = {"", 2,"",{"",0,"","",""},0,'0',"",0};
+    bool existeArchivo;
 
     archivo = fopen(ARCHIVO_PACIENTES, "wb");
 
     if(archivo == NULL)
-        return false;
+        existeArchivo = false;
     else
     {
-        for(i = 0; i < 50; i++)
+        for(i = 0; i < MAX_PACIENTES; i++)
             fwrite(&p, sizeof(Paciente), 1, archivo);
         fclose(archivo);
-        return true;
+        existeArchivo = true;
     }
+    return existeArchivo;
 }
 
 void guardarPaciente(Paciente *paciente) //tentativo
 {
-    FILE *archivo = fopen(ARCHIVO_PACIENTES, "a");
+    FILE *archivo;
+    archivo = fopen(ARCHIVO_PACIENTES, "a");
 
     if(archivo != NULL)
     {
@@ -156,4 +163,29 @@ void guardarPaciente(Paciente *paciente) //tentativo
     }
     else
         printf("\033[31mERROR al abrir archivo para guardar paciente.\033[0m\n");
+}
+bool cargarPacientes(Paciente *pacientes, size_t *tamano)
+{
+    FILE *archivoP;
+    Paciente p;
+    bool existeArchivo = false;
+
+    archivoP = fopen(ARCHIVO_PACIENTES, "rb");
+    
+    *(tamano) = 0;//inicializar contador de registros
+    if(archivoP != NULL)//si ya existe el archivo con registros
+    {
+    	while(fread(&p, sizeof(Paciente), 1, archivoP) == 1)
+    	{
+        	if(p.servicio == 1 || p.servicio == 0) //si el registro es valido
+        		*(tamano)++;
+        	*(pacientes + *(tamano)) = p;
+		}
+        existeArchivo = true;
+        fclose(archivoP);
+    }
+    else
+        existeArchivo = iniArchivoP();
+    
+    return existeArchivo;
 }

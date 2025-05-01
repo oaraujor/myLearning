@@ -19,7 +19,7 @@ typedef struct
 } Direccion;
 
 typedef struct
-{      
+{
     char folio[MAX_FOLIO];
     int servicio;
     char nombre[MAX_CADENA];
