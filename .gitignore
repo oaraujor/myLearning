@@ -1,8 +1,7 @@
-#Ignore vsFile
-.vscode
-.json
-.docx
-.exe
-.o
-.txt
-.dat
+*.vscode
+*.json
+*.docx
+*.exe
+*.o
+*.txt
+*.dat
