@@ -21,14 +21,7 @@ void leerDireccion(Direccion *);
 void leerGenero(char *);
 void generarFolio(char *, char *);
 
-/*
-char *crearDirSintP(char *, char *);
-bool leerSintomas(char *);
-*/
-
 bool leerSintomas(char *, char *);
-
-
 bool contAgreg(const char *);
 bool guardarPregunta();
 
@@ -47,7 +40,7 @@ void leerPaciente(FILE *bdPacientes, size_t *tamano) /*<<<<<<< OCTAVIO ESTA TRAB
         leerEntero("Edad (1-100):", &p.edad, 1, 100);
         leerGenero(&p.genero);
         leerDireccion(&p.direccionP);
-        leerEntero("Servicio: ", &p.servicio, 0, 1);
+        leerEntero("Servicio: (0 - Consulta | 1 - Emergencia)", &p.servicio, 0, 1);
         leerEntero("Numero de consultorio disponible (1-9): ", &p.numConsultorios, 1, 9);/*<------------ver despues------------------------*/
         generarFolio(p.folio, p.nombre);
         
@@ -200,67 +193,7 @@ void leerGenero(char *genero) /*<<<<<<< FUNCIONA NO MOVER*/
     }while(!valido);
 }
 
-/*
-char *crearDirSintP(char *folio, char *sintomas) //<<<<<<< OCTAVIO ESTA TRABAJANDO EN ESTE NO MOVER
-{
-    int i, j;
-
-    i = 0;
-    while(DIR_BASE[i] != '\0')
-    {
-        sintomas[i] = DIR_BASE[i];
-        i++;
-    }
-    j = 0;
-    while(folio[j] != '\0' && i < MAX_DIR-1)
-    {
-        sintomas[i] = folio[j];
-        i++;
-        j++;
-    }
-    j = 0;
-    while(EXTENSION_P[j] != '\0' && i < MAX_DIR-1)
-    {
-        sintomas[i] = EXTENSION_P[j];
-        i++;
-        j++;
-    }
-
-    sintomas[i] = '\0';
-    return sintomas;
-}
-*/
-
-/*
-bool leerSintomas(char *sintomas) /*<<<<<<< OCTAVIO ESTA TRABAJANDO EN ESTE NO MOVER
-{
-    FILE *archivoFolio;
-    int i, j;
-    bool continuar, exitoSintomas;
-    
-    archivoFolio = fopen(sintomas, "w");
-    if(archivoFolio == NULL)
-        exitoSintomas = false;
-    else
-    {
-        char linea[1024];
-        continuar = true;
-        printf("Ingrese los sintomas del paciente. Ingrese FIN en una nueva linea para terminar de capturar los sintomas: \n");
-        while(continuar && fgets(linea, sizeof(linea), stdin))
-        {
-            if(strcmp(linea, "FIN\n") == 0 || strcmp(linea, "FIN\r\n") == 0)
-                continuar = false;
-            else
-                fputs(linea, archivoFolio);
-        }
-        exitoSintomas = true;
-    }
-
-    fclose(archivoFolio);
-    return exitoSintomas;
-}
-*/
-bool leerSintomas(char *sintomas, char *folio)
+bool leerSintomas(char *sintomas, char *folio) /*<<<<<<< FUNCIONA NO MOVER*/
 {
     FILE *archivoFolio; 
     int i, j;
@@ -296,7 +229,9 @@ bool leerSintomas(char *sintomas, char *folio)
     {
         char linea[1024];
         continuar = true;
-        printf("Ingrese los sintomas del paciente. Ingrese FIN en una nueva linea para terminar: \n");
+        system("CLS");
+        printf(VERDEINT"Ingrese los sintomas del paciente. Ingrese FIN en una nueva linea para terminar: \n"NORMAL);
+        fflush(stdin);
         while(continuar && fgets(linea, sizeof(linea), stdin))
         {
             if(strcmp(linea, "FIN\n") == 0 || strcmp(linea, "FIN\r\n") == 0)
@@ -318,7 +253,7 @@ bool contAgreg(const char *persona) /*<<<<<<< FUNCIONA NO MOVER*/
 
     do
     {
-        printf("¿Desea agregar otro %s? (Si/No): ", persona);
+        printf("Desea agregar otro %s? (Si/No): ", persona);
         fflush(stdin);
         gets(seguir);
         i = 0;
@@ -328,7 +263,7 @@ bool contAgreg(const char *persona) /*<<<<<<< FUNCIONA NO MOVER*/
             i++;
         }
         if (strcmp(seguir, "si") != 0 && strcmp(seguir, "no") != 0)
-            printf("\033[31mIngrese si/no.\033[0m\a\n");
+            printf(ROJO"Ingrese si/no\n"NORMAL);
 
     } while (strcmp(seguir, "si") != 0 && strcmp(seguir, "no") != 0);
 
@@ -373,7 +308,7 @@ bool guardarPregunta() /*<<<<<<< OCTAVIO ESTA TRABAJANDO EN ESTE NO MOVER*/
 
     do
     {
-        printf("¿Desea guardar el paciente ingresado?\n");
+        printf("Desea guardar el paciente ingresado? (si|no)\n");
         fflush(stdin);
         fgets(seguir, sizeof(seguir), stdin);
 

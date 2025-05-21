@@ -15,9 +15,9 @@ int main()
     archivoBdPacientes = cargarPacientes(&tamanoP); 
     if (archivoBdPacientes != NULL)
     {
+        system("cls");
         do
         {
-            system("cls");
             printf(BLANCO"#########################################\n"NORMAL);
             printf(BLANCO"#"VERDEINT"                MENU                   "BLANCO"#\n"NORMAL);
             printf(BLANCO"#"VERDEINT" 1) Alta de Pacientes                  "BLANCO"#\n"NORMAL);
@@ -28,7 +28,7 @@ int main()
             printf(BLANCO"#########################################\n"NORMAL);
             printf(">>> ");
                     
-            scanf("%c", &opcion);
+            scanf(" %c", &opcion);
     
             switch(opcion)
             {
@@ -50,10 +50,6 @@ int main()
                 case '5':
                     printf("Saliendo del programa...\n");
                     break;
-                default:
-                    printf(ROJO"OPCION NO VALIDA!"NORMAL);
-                    break;
-    
             }
         }while(opcion != '5');
 
