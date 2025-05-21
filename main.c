@@ -38,13 +38,13 @@ int main()
                         printf("ERROR: Maxima capacidad de pacientes!\n");    
                     break;
                 case '2':
-                    buscarEditarPacientes();
+                    //buscarEditarPacientes();
                     break;
                 case '3':
-                    listarPacientes();
+                    listarPacientes(archivoBdPacientes, &tamanoP);
                     break;
                 case '4':
-                    eliminarPacientes();
+                    //eliminarPacientes();
                     break;
                 case '5':
                     printf("Saliendo del programa...\n");

@@ -4,51 +4,42 @@
 #define ARCHIVO_PACIENTES "data/pacientes.dat"
 
 #include "structuras.h"
-#include "controlArchivos.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
 
-void listarPacientes();
+void listarPacientes(FILE *archivo, size_t *tamano);
 void eliminarPacientes();
-void guardarPaciente(Paciente *);
+void guardarPaciente(FILE *, Paciente *);
 bool buscarEditarPacientes();
 FILE *cargarPacientes(size_t *);
 
-void listarPacientes()//tentativo
+void listarPacientes(FILE *archivo, size_t *tamano)
 {
-    FILE *archivo = fopen(ARCHIVO_PACIENTES, "r");
-    Paciente paciente;
-    int id = 1;
+    Paciente p;
+    int count = 0;
 
-    if(archivo != NULL)
+    system("cls");
+    rewind(archivo);
+
+    if (*tamano != 0)
     {
-        printf("\n--- LISTADO DE PACIENTES ---\n");
-        while(fread(&paciente, sizeof(Paciente), 1, archivo))
+        printf("\t\tLISTADO DE PACIENTES\n");
+        printf("================================================================================================================\n");
+        printf("| %-5s | %-20s | %-4s | %-6s | %-15s | %-10s | %-12s |\n", 
+               "Folio", "Nombre", "Edad", "Genero", "Estado", "Servicio", "Consultorio");
+        printf("================================================================================================================\n");
+    
+        while (fread(&p, sizeof(Paciente), 1, archivo) == 1)
         {
-            printf("ID: %d\n", id);
-            printf("Nombre: %s\n", paciente.nombre);
-            printf("Servicio: %s\n", paciente.servicio == 0 ? "Consulta" : "Emergencia");
-            printf("Edad: %d\n", paciente.edad);
-            printf("Genero: %c\n", paciente.genero);
-            printf("Consultorio: %d\n", paciente.numConsultorios);
-            printf("Direccion: %s %d, %s, %s, %s\n", 
-                   paciente.direccionP.calle,
-                   paciente.direccionP.numero,
-                   paciente.direccionP.colonia,
-                   paciente.direccionP.municipio,
-                   paciente.direccionP.estado);
-            printf("Sintomas: %c\n", paciente.sintomas);
-            printf("--------------------------\n");
-            id++;
-        }
-        fclose(archivo);
+            printf("| %-5d | %-20s | %-4d | %-6c | %-15s | %-10s | %-12d |\n", p.folio, p.nombre, p.edad, p.genero, p.direccionP.estado, (p.servicio == 0 ? "Consulta" : "Emergencia"), p.numConsultorios);
+        }        
+        printf("================================================================================================================\n");
     }
     else
-    {
-        printf("\033[31mNo hay pacientes registrados.\033[0m\n");
-    }
+        printf(ROJO"No hay pacientes registrados\n"NORMAL);
 }
+
 
 bool buscarEditarPacientes()//por hacer
 {
@@ -157,19 +148,25 @@ FILE *iniArchivoP()
     return archivo;
 }
 
-void guardarPaciente(Paciente *paciente) //tentativo
+void guardarPaciente(FILE *archivo, Paciente *p)
 {
-    FILE *archivo;
-    archivo = fopen(ARCHIVO_PACIENTES, "a");
+    int lugar;
+    bool cont = true;
+    Paciente pLeer;
 
-    if(archivo != NULL)
+    rewind(archivo);
+    lugar = 0;
+    while(fread(&pLeer, sizeof(Paciente), 1, archivo) == 1 && cont)
     {
-        fwrite(paciente, sizeof(Paciente), 1, archivo);
-        fclose(archivo);
-        printf("\033[32mPaciente registrado correctamente.\033[0m\n");
+        if(pLeer.servicio == 2)
+            cont = false;
+        lugar++;
     }
-    else
-        printf("\033[31mERROR al abrir archivo para guardar paciente.\033[0m\n");
+    //rewind(archivo);
+
+    fseek(archivo, sizeof(Paciente) * lugar, SEEK_SET);
+    fwrite(p, sizeof(Paciente), 1, archivo);
+
 }
 
 FILE *cargarPacientes(size_t *tamano)

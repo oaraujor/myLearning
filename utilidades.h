@@ -11,10 +11,6 @@
 #include "utilidades.h"
 #include "controlArchivos.h"
 
-#define NORMAL "\033[0m"
-#define VERDEINT "\033[1;32m"
-#define BLANCO "\033[0;37m"
-#define ROJO "\033[1;31m"
 #define VALIDAR_RANGO(ptr, min, max) (*(ptr) >= (min) && *(ptr) <= (max))
 
 void leerPaciente(FILE *, size_t *);
@@ -28,11 +24,13 @@ char *crearDirSintP(char *, char *);
 
 bool leerSintomas(char *);
 bool contAgreg(const char *);
+bool guardarPregunta();
+
 
 void leerPaciente(FILE *bdPacientes, size_t *tamano)
 {
     Paciente *p;
-    bool continuar, errorSint;
+    bool continuar, errorSint, guardar;
 
     do
     {
@@ -44,25 +42,31 @@ void leerPaciente(FILE *bdPacientes, size_t *tamano)
         leerGenero(&p->genero);
         leerDireccion(&p->direccionP);
         leerEntero("Servicio: ", &p->servicio, 0, 1);
-        generarFolio(p->folio, p->nombre);
-        leerEntero("Numero de consultorio disponible (1-50): ", &p->numConsultorios, 1, 9);//<------------------------------------
-
+        leerEntero("Numero de consultorio disponible (1-50): ", &p->numConsultorios, 1, 9);//<------------ver despues------------------------
+        
         errorSint = leerSintomas(crearDirSintP(p->folio, p->sintomas));
         if(errorSint)
+        printf(VERDEINT"Sintomas registrados correctamente\n"NORMAL);
+        else
+        printf(ROJO"Ocurrio un error al ingresar los sintomas\n"NORMAL);
+        
+        guardar = guardarPregunta();
+        if(guardar)
         {
-            printf("Sintomas registrados correctamente");
-
-            guardarPaciente(pacienteActual);//por ver <--------------------------------
-            
-            printf("El paciente ha sido registrado correctamente\n");
-            printf("FOLIO: %s\n", pacienteActual->folio);
+            guardarPaciente(bdPacientes, p);
+            system("cls");
+            printf(VERDEINT"El paciente ha sido registrado correctamente\n"NORMAL);
+            generarFolio(p->folio, p->nombre);
+            printf("FOLIO: %s\n\n", p->folio);
         }
         else
-            printf(ROJO"Ocurrio un error al ingresar los sintomas"NORMAL);
-
+        {
+            system("cls");
+            printf(ROJO"DATOS DESCARTADOS\n\n"NORMAL);
+        }
         continuar = contAgreg("paciente");
-        if(continuar == true)
-            *(tamano)++;
+        if(guardar == true)
+            (*tamano)++;
     }while(continuar && *(tamano) < MAX_PACIENTES);
 }
 
@@ -299,6 +303,37 @@ void generarFolio(char *folio, char *nombre)
         j++;
     }
     folio[j] = '\0';
+}
+
+bool guardarPregunta()
+{
+    char seguir[3];
+    int i;
+
+    do
+    {
+        printf("¿Desea guardar el paciente ingresado?\n");
+        fflush(stdin);
+        fgets(seguir, sizeof(seguir), stdin);
+
+        i = 0;
+        while (seguir[i] != '\0')
+        {
+            seguir[i] = tolower(seguir[i]);
+            i++;
+        }
+        if (strcmp(seguir, "si") != 0 && strcmp(seguir, "no") != 0)
+        {
+            system("cls");
+            printf(ROJO"Ingrese si/no\n"NORMAL);
+        }
+
+    } while (strcmp(seguir, "si") != 0 && strcmp(seguir, "no") != 0);
+
+    if(strcmp(seguir, "si") == 0)
+        return true;
+    else
+        return false;
 }
 
 //<-------------------- falta lo de los consultorios

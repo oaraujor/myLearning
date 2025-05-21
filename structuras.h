@@ -8,6 +8,11 @@
 #define DIR_BASE "data/pacientes/"
 #define EXTENSION_P ".txt"
 
+#define NORMAL "\033[0m"
+#define VERDEINT "\033[1;32m"
+#define BLANCO "\033[0;37m"
+#define ROJO "\033[1;31m"
+
 typedef struct
 {
     char calle[MAX_CADENA];
