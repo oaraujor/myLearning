@@ -8,13 +8,13 @@
 #include <string.h>
 #include <stdbool.h>
 
-void listarPacientes(FILE *archivo, size_t *tamano);
-void eliminarPacientes();
+void listarPacientes(FILE *, size_t *);
+void eliminarPacientes(FILE *);
 void guardarPaciente(FILE *, Paciente *);
-bool buscarEditarPacientes();
+bool buscarEditarPacientes(FILE *);
 FILE *cargarPacientes(size_t *);
 
-void listarPacientes(FILE *archivo, size_t *tamano)
+void listarPacientes(FILE *archivo, size_t *tamano) /*<<<<<<< OCTAVIO ESTA TRABAJANDO EN ESTE NO MOVER*/
 {
     Paciente p;
     int count = 0;
@@ -41,95 +41,21 @@ void listarPacientes(FILE *archivo, size_t *tamano)
 }
 
 
-bool buscarEditarPacientes()//por hacer
+bool buscarEditarPacientes(FILE *archivo)
 {
     /*
-    FILE *archivo = fopen(ARCHIVO_PACIENTES, "r+b");
-    Paciente paciente;
-    int idBuscar;
-    bool encontrado = false;
-    int id = 1;
-
-    if(archivo != NULL)
-    {
-        printf("Ingrese el ID del paciente a buscar/editar: ");
-        scanf("%d", &idBuscar);
-
-        while(fread(&paciente, sizeof(Paciente), 1, archivo))
-        {
-            if(id == idBuscar)
-            {
-                printf("\nPaciente encontrado:\n");
-                printf("Nombre: %s\n", paciente.nombre);
-                printf("Edad: %d\n", paciente.edad);
-                printf("Consultorio: %d\n", paciente.numConsultorios);
-
-                printf("\n-- Modificando datos --\n");
-                leerCadena("Nuevo nombre: ", paciente.nombre);
-                leerEntero("Nueva edad (1-100): ", &paciente.edad, 1, 100);
-                leerEntero("Nuevo consultorio (1-50): ", &paciente.numConsultorios, 1, 50);
-
-                fseek(archivo, -sizeof(Paciente), SEEK_CUR);
-                fwrite(&paciente, sizeof(Paciente), 1, archivo);
-                encontrado = true;
-                break;
-            }
-            id++;
-        }
-
-        fclose(archivo);
-
-        if(!encontrado)
-            printf("\033[31mPaciente no encontrado.\033[0m\n");
-    }
-    else
-    {
-        printf("\033[31mError al abrir archivo.\033[0m\n");
-    }
-
-    return encontrado;
+		TODO - en forma archivos
     */
 }
 
-void eliminarPacientes() //tentativo
+void eliminarPacientes(FILE *archivo)
 {
     /*
-    FILE *archivo = fopen(ARCHIVO_PACIENTES, "rb");
-    FILE *temp = fopen("temp.txt", "wb");
-    Paciente paciente;
-    int idEliminar;
-    int id = 1;
-
-    if(archivo != NULL && temp != NULL)
-    {
-        printf("Ingrese el ID del paciente a eliminar: ");
-        scanf("%d", &idEliminar);
-
-        while(fread(&paciente, sizeof(Paciente), 1, archivo))
-        {
-            if(id != idEliminar)
-            {
-                fwrite(&paciente, sizeof(Paciente), 1, temp);
-            }
-            id++;
-        }
-
-        fclose(archivo);
-        fclose(temp);
-
-        remove(ARCHIVO_PACIENTES);
-        rename("temp.txt", ARCHIVO_PACIENTES);
-
-        printf("\033[32mPaciente eliminado (si existía).\033[0m\n");
-    }
-    else
-    {
-        printf("\033[31mError al procesar archivos.\033[0m\n");
-    }
+    	TODO - en forma archivos
     */
 }
 
-FILE *iniArchivoP()
+FILE *iniArchivoP()   /*<<<<<<< FUNCIONA NO MOVER*/
 {
     FILE *archivo;
     int i;
@@ -148,7 +74,7 @@ FILE *iniArchivoP()
     return archivo;
 }
 
-void guardarPaciente(FILE *archivo, Paciente *p)
+void guardarPaciente(FILE *archivo, Paciente *p) /*<<<<<<< OCTAVIO ESTA TRABAJANDO EN ESTE NO MOVER*/
 {
     int lugar;
     bool cont = true;
@@ -160,16 +86,17 @@ void guardarPaciente(FILE *archivo, Paciente *p)
     {
         if(pLeer.servicio == 2)
             cont = false;
-        lugar++;
+        else
+        	lugar++;
     }
-    //rewind(archivo);
+    /*rewind(archivo);*/
 
     fseek(archivo, sizeof(Paciente) * lugar, SEEK_SET);
     fwrite(p, sizeof(Paciente), 1, archivo);
 
 }
 
-FILE *cargarPacientes(size_t *tamano)
+FILE *cargarPacientes(size_t *tamano) /*<<<<<<< FUNCIONA NO MOVER*/
 {
     FILE *archivoP;
     Paciente p;

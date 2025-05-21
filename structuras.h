@@ -31,7 +31,7 @@ typedef struct
     int edad;
     char genero;
     char sintomas[MAX_DIR];
-    int numConsultorios; //<-------------------------------------
+    int numConsultorios;
 } Paciente;
 
 #endif

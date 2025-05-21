@@ -7,6 +7,9 @@
 *.dat
 *.dev
 *.ico
-.layout
-.res
-.win
+*.layout
+*.res
+*.win
+*.gch
+*.rar
+*.exe

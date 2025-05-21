@@ -26,6 +26,7 @@ int main()
             printf(BLANCO"#"VERDEINT" 4) Baja de paciente                   "BLANCO"#\n"NORMAL);
             printf(BLANCO"#"VERDEINT" 5) Salir                              "BLANCO"#\n"NORMAL);
             printf(BLANCO"#########################################\n"NORMAL);
+            printf(">>> ");
                     
             scanf("%c", &opcion);
     
@@ -33,18 +34,18 @@ int main()
             {
                 case '1':
                     if(tamanoP < MAX_PACIENTES)
-                        leerPaciente(archivoBdPacientes, &tamanoP);
+                        leerPaciente(archivoBdPacientes, &tamanoP);/*<<<<<<< OCTAVIO ESTA TRABAJANDO EN ESTE NO MOVER*/
                     else
                         printf("ERROR: Maxima capacidad de pacientes!\n");    
                     break;
                 case '2':
-                    //buscarEditarPacientes();
+                    /*buscarEditarPacientes();*/
                     break;
                 case '3':
-                    listarPacientes(archivoBdPacientes, &tamanoP);
+                    listarPacientes(archivoBdPacientes, &tamanoP);/*<<<<<<< OCTAVIO ESTA TRABAJANDO EN ESTE NO MOVER*/
                     break;
                 case '4':
-                    //eliminarPacientes();
+                    /*eliminarPacientes();*/
                     break;
                 case '5':
                     printf("Saliendo del programa...\n");
@@ -54,7 +55,7 @@ int main()
                     break;
     
             }
-        }while(opcion != 5);
+        }while(opcion != '5');
 
         fclose(archivoBdPacientes);
     }
