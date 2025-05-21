@@ -7,53 +7,59 @@
 
 int main()
 {
-    int opcion;
+    char opcion;
     bool verifArchivo;
-    Paciente pacientes[MAX_PACIENTES];
     size_t tamanoP;
+    FILE *archivoBdPacientes;
 
-    if (cargarPacientes(pacientes, &tamanoP) != false)
+    archivoBdPacientes = cargarPacientes(&tamanoP); 
+    if (archivoBdPacientes != NULL)
     {
         do
         {
-            printf("\tMENU\n");
-            printf("1) Alta de Pacientes\n");
-            printf("2) Busqueda o edicion de paciente\n");
-            printf("3) Listado de pacientes\n");
-            printf("4) Baja de paciente\n");
-            printf("5) Salir\n");
-            
-            scanf("%d", &opcion);
+            system("cls");
+            printf(BLANCO"#########################################\n"NORMAL);
+            printf(BLANCO"#"VERDEINT"                MENU                   "BLANCO"#\n"NORMAL);
+            printf(BLANCO"#"VERDEINT" 1) Alta de Pacientes                  "BLANCO"#\n"NORMAL);
+            printf(BLANCO"#"VERDEINT" 2) Busqueda o edicion de paciente     "BLANCO"#\n"NORMAL);
+            printf(BLANCO"#"VERDEINT" 3) Listado de pacientes               "BLANCO"#\n"NORMAL);
+            printf(BLANCO"#"VERDEINT" 4) Baja de paciente                   "BLANCO"#\n"NORMAL);
+            printf(BLANCO"#"VERDEINT" 5) Salir                              "BLANCO"#\n"NORMAL);
+            printf(BLANCO"#########################################\n"NORMAL);
+                    
+            scanf("%c", &opcion);
     
             switch(opcion)
             {
-                case 1:
+                case '1':
                     if(tamanoP < MAX_PACIENTES)
-                        leerPaciente(pacientes, &tamanoP);
+                        leerPaciente(archivoBdPacientes, &tamanoP);
                     else
                         printf("ERROR: Maxima capacidad de pacientes!\n");    
                     break;
-                case 2:
+                case '2':
                     buscarEditarPacientes();
                     break;
-                case 3:
+                case '3':
                     listarPacientes();
                     break;
-                case 4:
+                case '4':
                     eliminarPacientes();
                     break;
-                case 5:
+                case '5':
                     printf("Saliendo del programa...\n");
                     break;
                 default:
-                    printf("Opcion no valida");
+                    printf(ROJO"OPCION NO VALIDA!"NORMAL);
                     break;
     
             }
         }while(opcion != 5);
+
+        fclose(archivoBdPacientes);
     }
     else
-        printf("ERROR: Algo salio mal al inicar el programa.\n");
+        printf(ROJO"ERROR: ALGO SALIO MAL AL INICIAR EL PROGRAMA\n"NORMAL);
 
     return 0;
 

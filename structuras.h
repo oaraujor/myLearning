@@ -8,7 +8,6 @@
 #define DIR_BASE "data/pacientes/"
 #define EXTENSION_P ".txt"
 
-
 typedef struct
 {
     char calle[MAX_CADENA];
