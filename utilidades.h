@@ -1,63 +1,87 @@
+#ifndef UTILIDADES_H
+#define UTILIDADES_H
+
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
 
 #include "structuras.h"
 #include "utilidades.h"
 #include "controlArchivos.h"
 
-#define VALIDAR_RANGO(ptr, min, max) (*(ptr) >= (min) && *(ptr) <= (max)) //remplazo a funciones de validar opcion
+#define VALIDAR_RANGO(ptr, min, max) (*(ptr) >= (min) && *(ptr) <= (max))
 
-void leerPaciente(Paciente *pacientes, size_t *tamano)
+void leerPaciente(FILE *, size_t *);
+void leerEntero(const char* , int *, int , int );
+void leerCadena(const char *, char *);
+void leerDireccion(Direccion *);
+void leerGenero(char *);
+void generarFolio(char *, char *);
+
+bool leerSintomas(char *, char *);
+bool contAgreg(const char *);
+bool guardarPregunta();
+
+
+void leerPaciente(FILE *bdPacientes, size_t *tamano) /*<<<<<<< OCTAVIO ESTA TRABAJANDO EN ESTO NO MOVER*/
 {
-    Paciente *pacienteActual;
-    bool continuar, errorSint;
+    Paciente p;
+    bool continuar, errorSint, guardar;
 
     do
     {
         system("cls");
         printf("\tAlta de Pacientes - Pacientes ingresados: %zu/50\n", *tamano);
-        pacienteActual = pacientes + *(tamano);
-        
-        leerEntero("Servcio (0 - Consulta | 1 - Emergencia): ", &pacienteActual->servicio, 0, 1);
-        leerCadena("Nombre de Paciente: ", pacienteActual->nombre);
-        generarFolio(pacienteActual->folio, pacienteActual->nombre);
-        leerDireccion(&pacienteActual->direccionP);
-        leerEntero("Edad (1-100):", &pacienteActual->edad, 1, 100);
-        leerGenero(&pacienteActual->genero);
-        leerEntero("Numero de consultorio disponible (1-50): ", &pacienteActual->numConsultorios, 1, 50);//<------------------------------------
 
-        errorSint = leerSintomas(pacienteActual->sintomas, pacienteActual->folio);
+        leerCadena("Nombre de Paciente: ", p.nombre);
+        leerEntero("Edad (1-100):", &p.edad, 1, 100);
+        leerGenero(&p.genero);
+        leerDireccion(&p.direccionP);
+        leerEntero("Servicio: (0 - Consulta | 1 - Emergencia)", &p.servicio, 0, 1);
+        leerEntero("Numero de consultorio disponible (1-9): ", &p.numConsultorios, 1, 9);/*<------------ver despues------------------------*/
+        generarFolio(p.folio, p.nombre);
+        
+		errorSint = leerSintomas(p.sintomas, p.folio);
         if(errorSint)
         {
-            printf("Sintomas registrados correctamente");
-            guardarPaciente(pacienteActual);//por ver <--------------------------------
-            printf("El paciente ha sido registrado correctamente\n");
-            printf("FOLIO: %s\n", pacienteActual->folio);
+        	printf(VERDEINT"Sintomas registrados correctamente\n"NORMAL);
+            guardar = guardarPregunta();
         }
         else
-            printf("Ocurrio un error al ingresar los sintomas");
-
+        	printf(ROJO"Ocurrio un error al ingresar los sintomas\n"NORMAL);
+        if(guardar)
+        {
+            guardarPaciente(bdPacientes, &p);
+            system("cls");
+            printf(VERDEINT"El paciente ha sido registrado correctamente\n"NORMAL);
+            printf("FOLIO: %s\n\n", p.folio);
+        }
+        else
+        {
+            system("cls");
+            printf(ROJO"DATOS DESCARTADOS\n\n"NORMAL);
+        }
         continuar = contAgreg("paciente");
-        if(continuar == true)
-            *(tamano)++;
+        if(guardar == true)
+            (*tamano)++;
     }while(continuar && *(tamano) < MAX_PACIENTES);
 }
 
-void leerEntero(const char* mensaje, int *numero, int min, int max)
+void leerEntero(const char* mensaje, int *numero, int min, int max) /*<<<<<<< FUNCIONA NO MOVER*/
 {
     do
     {
         printf(mensaje);
         scanf("%d", numero);
         if(!VALIDAR_RANGO(numero, min, max))
-        printf("\033[31m%s Invalido | %d - %d.\033[0m\a\n", mensaje, min, max);
+            printf(ROJO"OPCION INVALIDA | (%d - %d)\n"NORMAL, mensaje, min, max);
     }while(!VALIDAR_RANGO(numero, min, max));
 }
 
-void leerCadena(const char *mensaje, char *cadena)
+void leerCadena(const char *mensaje, char *cadena) /*<<<<<<< FUNCIONA NO MOVER*/
 {
     char buffer[MAX_CADENA];
     char limpio[MAX_CADENA];
@@ -135,7 +159,7 @@ void leerCadena(const char *mensaje, char *cadena)
     }while(!esValida);
 }
 
-void leerDireccion(Direccion *direccion)
+void leerDireccion(Direccion *direccion) /*<<<<<<< FUNCIONA NO MOVER*/
 {
     printf("Direccion:\n");
 
@@ -149,14 +173,14 @@ void leerDireccion(Direccion *direccion)
     leerCadena("Estado: ", direccion->estado);
 }
 
-void leerGenero(char *genero)
+void leerGenero(char *genero) /*<<<<<<< FUNCIONA NO MOVER*/
 {
     char entrada;
     bool valido;
 
     do
     {
-        printf("\tGenero (M/F): ");
+        printf("Genero (M/F): ");
         scanf(" %c", &entrada);
 
         valido = (entrada == 'M' || entrada == 'F' || entrada == 'm' || entrada == 'f');
@@ -169,7 +193,7 @@ void leerGenero(char *genero)
     }while(!valido);
 }
 
-bool leerSintomas(char *sintomas, char *folio)
+bool leerSintomas(char *sintomas, char *folio) /*<<<<<<< FUNCIONA NO MOVER*/
 {
     FILE *archivoFolio; 
     int i, j;
@@ -205,7 +229,9 @@ bool leerSintomas(char *sintomas, char *folio)
     {
         char linea[1024];
         continuar = true;
-        printf("Ingrese los sintomas del paciente. Ingrese FIN en una nueva linea para terminar: \n");
+        system("CLS");
+        printf(VERDEINT"Ingrese los sintomas del paciente. Ingrese FIN en una nueva linea para terminar: \n"NORMAL);
+        fflush(stdin);
         while(continuar && fgets(linea, sizeof(linea), stdin))
         {
             if(strcmp(linea, "FIN\n") == 0 || strcmp(linea, "FIN\r\n") == 0)
@@ -220,14 +246,14 @@ bool leerSintomas(char *sintomas, char *folio)
     return exitoSintomas;
 }
 
-bool contAgreg(const char *persona)
+bool contAgreg(const char *persona) /*<<<<<<< FUNCIONA NO MOVER*/
 {
     char seguir[3];
     int i;
 
     do
     {
-        printf("¿Desea agregar otro %s? (Si/No): ", persona);
+        printf("Desea agregar otro %s? (Si/No): ", persona);
         fflush(stdin);
         gets(seguir);
         i = 0;
@@ -237,7 +263,7 @@ bool contAgreg(const char *persona)
             i++;
         }
         if (strcmp(seguir, "si") != 0 && strcmp(seguir, "no") != 0)
-            printf("\033[31mIngrese si/no.\033[0m\a\n");
+            printf(ROJO"Ingrese si/no\n"NORMAL);
 
     } while (strcmp(seguir, "si") != 0 && strcmp(seguir, "no") != 0);
 
@@ -247,7 +273,7 @@ bool contAgreg(const char *persona)
         return false;
 }
 
-void generarFolio(char *folio, char *nombre)
+void generarFolio(char *folio, char *nombre) /*<<<<<<< FUNCIONA NO MOVER*/
 {
     int i = 0, j = 0;
 
@@ -275,4 +301,36 @@ void generarFolio(char *folio, char *nombre)
     folio[j] = '\0';
 }
 
-//<-------------------- falta lo de los consultorios
+bool guardarPregunta() /*<<<<<<< OCTAVIO ESTA TRABAJANDO EN ESTE NO MOVER*/
+{
+    char seguir[3];
+    int i;
+
+    do
+    {
+        printf("Desea guardar el paciente ingresado? (si|no)\n");
+        fflush(stdin);
+        fgets(seguir, sizeof(seguir), stdin);
+
+        i = 0;
+        while (seguir[i] != '\0')
+        {
+            seguir[i] = tolower(seguir[i]);
+            i++;
+        }
+        if (strcmp(seguir, "si") != 0 && strcmp(seguir, "no") != 0)
+        {
+            system("cls");
+            printf(ROJO"Ingrese si/no\n"NORMAL);
+        }
+
+    } while (strcmp(seguir, "si") != 0 && strcmp(seguir, "no") != 0);
+
+    if(strcmp(seguir, "si") == 0)
+        return true;
+    else
+        return false;
+}
+
+/*<-------------------- falta lo de los consultorios*/
+#endif

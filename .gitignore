@@ -5,3 +5,11 @@
 *.o
 *.txt
 *.dat
+*.dev
+*.ico
+*.layout
+*.res
+*.win
+*.gch
+*.rar
+*.exe

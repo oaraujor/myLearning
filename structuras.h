@@ -8,6 +8,10 @@
 #define DIR_BASE "data/pacientes/"
 #define EXTENSION_P ".txt"
 
+#define NORMAL "\033[0m"
+#define VERDEINT "\033[1;32m"
+#define BLANCO "\033[0;37m"
+#define ROJO "\033[1;31m"
 
 typedef struct
 {
@@ -27,7 +31,7 @@ typedef struct
     int edad;
     char genero;
     char sintomas[MAX_DIR];
-    int numConsultorios; //<-------------------------------------
+    int numConsultorios;
 } Paciente;
 
 #endif
