@@ -11,8 +11,12 @@
 
 void listarPacientes(FILE *, size_t *);
 void eliminarPacientes(FILE *, size_t *);
-bool buscarEditarPacientes(FILE *);
+void buscarEditarPacientes(FILE *, size_t *);
 void eliminarRegistro(FILE *, int *);
+void mostrarSintomas(char *);
+void editarP(FILE *, int *, Paciente );
+
+bool buscarFolio(char *, FILE *, int *);
 
 FILE *cargarPacientes(size_t *);
 FILE *iniArchivoP();
@@ -52,61 +56,47 @@ void listarPacientes(FILE *archivo, size_t *tamano) /*FUNCIONA NO MOVER*/
     
 }
 
-bool buscarEditarPacientes(FILE *archivo)
-{
-    /*
-    TODO
-    */
-}
-
-void eliminarPacientes(FILE *archivoBdPacientes, size_t *tamano)
+void buscarEditarPacientes(FILE *archivoBdPacientes, size_t *tamano)
 {
     Paciente pLeer;
-    char nombreAbuscar[MAX_CADENA], folioAbuscar[MAX_FOLIO], opcion, si_no;
-    int lugar;
+    char folioAbuscar[MAX_FOLIO], nombreAbuscar[MAX_CADENA], opcion, si_no, in;
     bool encontrado = false, cont;
+    int lugar;
 
     system("cls");
     do
     {
-        
+        lugar = 0;
         do
         {
-            printf("a. Eliminar por FOLIO\n");
-            printf("b. Eliminar por NOMBRE\n");
+            printf("a. Buscar por FOLIO\n");
+            printf("b. Buscar por NOMBRE\n");
             printf("Ingrese la opcion: ");
             fflush(stdin);
 
             scanf("%c", &opcion);
             if (opcion != 'a' && opcion != 'b')
-                printf(ROJO"Porfavor ingrese 'a' o 'b'"NORMAL); 
+                printf(ROJO"Porfavor ingrese 'a' o 'b'"NORMAL);
+
         }while (opcion != 'a' && opcion != 'b');
         
         switch(opcion)
         {
             case 'a':
-                rewind(archivoBdPacientes);
-                printf("Por favor ingrese el Folio del paciente a eliminar (ej. AAA-0123456789): ");
+                printf("Por favor ingrese el Folio del paciente a buscar (ej. AAA-0123456789): ");
                 fflush(stdin);
                 fgets(folioAbuscar, sizeof(folioAbuscar), stdin);
                 folioAbuscar[strcspn(folioAbuscar, "\n")] = '\0';
-        
-                lugar = 0;
-                while(fread(&pLeer, sizeof(Paciente), 1, archivoBdPacientes) == 1 && !encontrado && lugar < *tamano)
-                {
-                    if(strcmp(pLeer.folio, folioAbuscar) == 0)
-                        encontrado = true;
-                    else
-                        lugar++;
-                }
+                encontrado = buscarFolio(folioAbuscar, archivoBdPacientes, &lugar);
 
             break;
 
             case 'b':
 
-                leerCadena("Por favor ingrese el nombre del paciente a eliminar: ", nombreAbuscar);
+                leerCadena("Por favor ingrese el nombre del paciente a buscar: ", nombreAbuscar);
                 lugar = 0;
-                while(fread(&pLeer, sizeof(Paciente), 1, archivoBdPacientes) == 1 && !encontrado && lugar < *tamano)
+                rewind(archivoBdPacientes);
+                while(fread(&pLeer, sizeof(Paciente), 1, archivoBdPacientes) == 1 && !encontrado)
                 {
                     if(strcmp(pLeer.nombre, nombreAbuscar) == 0)
                         encontrado = true;
@@ -114,27 +104,99 @@ void eliminarPacientes(FILE *archivoBdPacientes, size_t *tamano)
                         lugar++;
                 }
             break;
-
+                
             default:
+                system("cls");
                 printf(ROJO"Por favor ingrese 'a' o 'b'\n"NORMAL);
             break;
+
         }
 
-        if(!encontrado)
+        if(encontrado)
         {
-            printf(ROJO"No se encontro el paciente. Intente de nuevo\n"NORMAL);
+            rewind(archivoBdPacientes);
+            fseek(archivoBdPacientes, sizeof(Paciente) * lugar, SEEK_SET);
+            fread(&pLeer, sizeof(Paciente), 1, archivoBdPacientes);
+            system("cls");
+            printf("Folio del Paciente: %s\n", pLeer.folio);
+            printf("Nombre del Paciente: %s\n", pLeer.nombre);
+            printf("Edad del Paciente: %d\n", pLeer.edad);
+            printf("Genero del Paciente: %s\n", (pLeer.genero == 'M' ? "Masculino" : "Femenino"));
+            printf("Direccion:\n");
+            printf("\tCalle y numero: %s #%d\n", pLeer.direccionP.calle, pLeer.direccionP.numero);
+            printf("\tColonia: %s\n", pLeer.direccionP.colonia);
+            printf("\tMunicipio: %s\n", pLeer.direccionP.municipio);
+            printf("\tEstado: %s\n", pLeer.direccionP.estado);
+            printf("Servicio: %s\n", (pLeer.servicio == 0 ? "Consulta" : "Emergencia"));
+            mostrarSintomas(pLeer.sintomas);
+            printf("Presione ENTER para continuar...");
+            fflush(stdin);
+	        scanf("%c", &in);
+            system("cls");
+
+            do
+            {
+                fflush(stdin);
+                printf("\nDesea editar el paciente(s/n)\n");
+                scanf(" %c", &si_no);
+                si_no = tolower(si_no);
+
+                if (si_no != 's' && si_no != 'n')
+                    printf(ROJO"Porfavor ingrese 's' o 'n'"NORMAL);     
+            }while(si_no != 's' && si_no != 'n');
+
+            if(si_no == 's')
+                editarP(archivoBdPacientes, &lugar, pLeer);
         }
         else
         {
-            eliminarRegistro(archivoBdPacientes, &lugar);
-            printf(ROJO"Paciente eliminado correctamente\n"NORMAL);
-
+            printf(ROJO"No se encontro ningun paciente\n"NORMAL);
         }
 
         do
         {
             fflush(stdin);
-            printf("Desea borrar otro paciente\n");
+            printf("Desea buscar otro paciente (s/n)\n");
+            scanf(" %c", &si_no);
+            si_no = tolower(si_no);
+
+            if (si_no != 's' && si_no != 'n')
+                printf(ROJO"Porfavor ingrese 's' o 'n'\n"NORMAL);
+
+        }while(si_no != 's' && si_no != 'n');
+
+        if(si_no == 's')
+            cont = true;
+        else
+            cont = false;
+            
+    }while(cont);
+
+}
+
+void eliminarPacientes(FILE *archivoBdPacientes, size_t *tamano)
+{
+    Paciente pLeer;
+    char folioAbuscar[MAX_FOLIO], si_no;
+    int lugar;
+    bool encontrado = false, cont;
+
+    system("cls");
+    do
+    {
+        printf("Por favor ingrese el Folio del paciente a eliminar (ej. AAA-0123456789): ");
+        fflush(stdin);
+        fgets(folioAbuscar, sizeof(folioAbuscar), stdin);
+        folioAbuscar[strcspn(folioAbuscar, "\n")] = '\0';
+
+        lugar = buscarFolio(folioAbuscar, archivoBdPacientes, &lugar);
+        eliminarRegistro(archivoBdPacientes, &lugar);
+        printf(ROJO"Paciente eliminado correctamente\n"NORMAL);
+
+        do
+        {
+            fflush(stdin);
+            printf("Desea borrar otro paciente(s/n)\n");
             scanf(" %c", &si_no);
             si_no = tolower(si_no);
 
@@ -161,7 +223,7 @@ void eliminarRegistro(FILE *archivoBdPacientes, int *numRegistro)
     fwrite(&p, sizeof(Paciente), 1, archivoBdPacientes);
 }
 
-FILE *iniArchivoP()   /*FUNCIONA NO MOVER*/
+FILE *iniArchivoP()
 {
     FILE *archivo;
     int i;
@@ -180,8 +242,7 @@ FILE *iniArchivoP()   /*FUNCIONA NO MOVER*/
     return archivo;
 }
 
-
-FILE *cargarPacientes(size_t *tamano) /*FUNCIONA NO MOVER*/
+FILE *cargarPacientes(size_t *tamano)
 {
     FILE *archivoP;
     Paciente p;
@@ -206,6 +267,78 @@ FILE *cargarPacientes(size_t *tamano) /*FUNCIONA NO MOVER*/
     }
     rewind(archivoP);
     return archivoP;
+}
+
+void mostrarSintomas(char *pwdSintomaPaciente)
+{
+    FILE *sintomasP;
+    char lineas[1024];
+
+    sintomasP = fopen(pwdSintomaPaciente, "r");
+    if(sintomasP != NULL)
+    {
+        printf(VERDEINT"\nSintomas del Paciente:\n"NORMAL);
+        while(fgets(lineas, sizeof(lineas), sintomasP) != NULL)
+        {
+            printf("%s", lineas);
+        }
+        printf(VERDEINT"-----------------------------------------\n"NORMAL);
+        fclose(sintomasP);
+    }
+    else
+        printf(ROJO"Ocurrio un error al leer los Sintomas\n"NORMAL);
+}
+
+bool buscarFolio(char *folioAbuscar, FILE *archivoBdPacientes, int *lugar)
+{
+    Paciente pLeer;
+    bool encontrado;
+
+    *lugar = 0;
+    rewind(archivoBdPacientes);
+    while(fread(&pLeer, sizeof(Paciente), 1, archivoBdPacientes) == 1 && !encontrado)
+    {
+        if(strcmp(pLeer.folio, folioAbuscar) == 0)
+            encontrado = true;
+        else
+            (*lugar)++;
+    }
+    return encontrado;
+}
+
+void editarP(FILE *archivoBdPacientes, int *posicion, Paciente p)
+{
+    bool errorSint, guardar;
+    system("cls");
+
+    printf("Folio del Paciente: %s\n", p.folio);
+    printf("Nombre del Paciente: %s\n", p.nombre);
+
+    leerEntero("Nueva edad (1-100):", &p.edad, 1, 100);
+    leerDireccion(&p.direccionP);
+    leerEntero("Servicio: (0 - Consulta | 1 - Emergencia): ", &p.servicio, 0, 1);
+    leerEntero("Numero de consultorio disponible (1-9): ", &p.numConsultorios, 1, 9);
+    
+    errorSint = leerSintomas(p.sintomas, p.folio);
+    if(errorSint)
+    {
+        printf(VERDEINT"Sintomas registrados correctamente\n"NORMAL);
+        guardar = guardarPregunta();
+    }
+    else
+        printf(ROJO"Ocurrio un error al ingresar los sintomas\n"NORMAL);
+    if(guardar)
+    {
+        system("cls");
+        fseek(archivoBdPacientes, sizeof(Paciente) * (*posicion), SEEK_SET);
+        fwrite(&p, sizeof(Paciente), 1, archivoBdPacientes);
+        printf(VERDEINT"El paciente ha sido editado correctamente\n"NORMAL);
+    }
+    else
+    {
+        system("cls");
+        printf(ROJO"DATOS DESCARTADOS\n\n"NORMAL);
+    }
 }
 
 #endif

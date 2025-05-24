@@ -14,8 +14,6 @@
 #define ROJO "\033[1;31m"
 #define CYAN "\033[1;36m"
 
-#include <time.h>
-
 typedef struct
 {
     char calle[MAX_CADENA];
@@ -35,7 +33,6 @@ typedef struct
     char genero;
     char sintomas[MAX_DIR];
     int numConsultorios;
-    /*time_t hrsRegistro;*/
 
 } Paciente;
 

@@ -40,7 +40,7 @@ void leerPaciente(FILE *bdPacientes, size_t *tamano) /*<<<<<<< OCTAVIO ESTA TRAB
         leerEntero("Edad (1-100):", &p.edad, 1, 100);
         leerGenero(&p.genero);
         leerDireccion(&p.direccionP);
-        leerEntero("Servicio: (0 - Consulta | 1 - Emergencia)", &p.servicio, 0, 1);
+        leerEntero("Servicio: (0 - Consulta | 1 - Emergencia): ", &p.servicio, 0, 1);
         leerEntero("Numero de consultorio disponible (1-9): ", &p.numConsultorios, 1, 9);/*<------------ver despues------------------------*/
         generarFolio(p.folio, p.nombre);
         

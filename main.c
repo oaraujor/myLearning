@@ -12,10 +12,12 @@ int main()
     size_t tamanoP;
     FILE *archivoBdPacientes;
 
+    
     archivoBdPacientes = cargarPacientes(&tamanoP); 
     if (archivoBdPacientes != NULL)
     {
         system("cls");
+        /*printf("%zu\n", tamanoP);*/
         do
         {
             printf(BLANCO"#########################################\n"NORMAL);
@@ -40,7 +42,7 @@ int main()
                         printf("ERROR: Maxima capacidad de pacientes!\n");    
                     break;
                 case '2':
-                    /*buscarEditarPacientes();*/
+                    buscarEditarPacientes(archivoBdPacientes, &tamanoP);
                     break;
                 case '3':
                     listarPacientes(archivoBdPacientes, &tamanoP);/*<<<<<<< OCTAVIO ESTA TRABAJANDO EN ESTE NO MOVER*/
