@@ -10,7 +10,6 @@
 
 #include "structuras.h"
 #include "utilidades.h"
-#include "controlArchivos.h"
 
 #define VALIDAR_RANGO(ptr, min, max) (*(ptr) >= (min) && *(ptr) <= (max))
 
@@ -20,6 +19,7 @@ void leerCadena(const char *, char *);
 void leerDireccion(Direccion *);
 void leerGenero(char *);
 void generarFolio(char *, char *);
+void guardarPaciente(FILE *, Paciente *);
 
 bool leerSintomas(char *, char *);
 bool contAgreg(const char *);
@@ -99,7 +99,6 @@ void leerCadena(const char *mensaje, char *cadena) /*<<<<<<< FUNCIONA NO MOVER*/
 
         buffer[strcspn(buffer, "\n")] = '\0';
 
-
         inicio = 0, fin = strlen(buffer) - 1;
         while(isspace((unsigned char)buffer[inicio]))
             inicio++;
@@ -113,7 +112,7 @@ void leerCadena(const char *mensaje, char *cadena) /*<<<<<<< FUNCIONA NO MOVER*/
         {
             if (isspace((unsigned char)buffer[i]))
             {
-                if (!espacioPrevio)
+                if(!espacioPrevio)
                 {
                     limpio[j] = ' ';
                     j++;
@@ -136,15 +135,15 @@ void leerCadena(const char *mensaje, char *cadena) /*<<<<<<< FUNCIONA NO MOVER*/
 
         limpio[j] = '\0';
 
-        if (!esValida || strlen(limpio) == 0)
-            printf("\033[31m%s Invalida\033[0m\n\a", mensaje);
+        if(!esValida || strlen(limpio) == 0)
+            printf(ROJO"%s Invalida"NORMAL, mensaje);
         else
         {
             nuevaPalabra = true;
             i = 0;
             while(limpio[i] != '\0')
             {
-                if (isspace((unsigned char)limpio[i]))
+                if(isspace((unsigned char)limpio[i]))
                     nuevaPalabra = true;
                 else
                 {
@@ -188,7 +187,7 @@ void leerGenero(char *genero) /*<<<<<<< FUNCIONA NO MOVER*/
         if(valido)
             *genero = (entrada >= 'a') ? entrada - 32 : entrada;
         else
-            printf("\033[31mGenero Invalido. Solo M o F.\033[0m\n\a}");
+            printf(ROJO"Genero Invalido. Solo M o F."NORMAL);
 
     }while(!valido);
 }
@@ -241,7 +240,6 @@ bool leerSintomas(char *sintomas, char *folio) /*<<<<<<< FUNCIONA NO MOVER*/
         }
         exitoSintomas = true;
     }
-
     fclose(archivoFolio);
     return exitoSintomas;
 }
@@ -257,23 +255,28 @@ bool contAgreg(const char *persona) /*<<<<<<< FUNCIONA NO MOVER*/
         fflush(stdin);
         gets(seguir);
         i = 0;
-        while (seguir[i] != '\0')
+        while(seguir[i] != '\0')
         {
             seguir[i] = tolower(seguir[i]);
             i++;
         }
-        if (strcmp(seguir, "si") != 0 && strcmp(seguir, "no") != 0)
+        if(strcmp(seguir, "si") != 0 && strcmp(seguir, "no") != 0)
             printf(ROJO"Ingrese si/no\n"NORMAL);
 
-    } while (strcmp(seguir, "si") != 0 && strcmp(seguir, "no") != 0);
+    }while(strcmp(seguir, "si") != 0 && strcmp(seguir, "no") != 0);
 
     if(strcmp(seguir, "si") == 0)
+    {
         return true;
+    }
     else
+    {
         return false;
+    }
 }
 
-void generarFolio(char *folio, char *nombre) /*<<<<<<< FUNCIONA NO MOVER*/
+
+void generarFolio(char *folio, char *nombre) /*FUNCIONA NO MOVER*/
 {
     int i = 0, j = 0;
 
@@ -301,7 +304,7 @@ void generarFolio(char *folio, char *nombre) /*<<<<<<< FUNCIONA NO MOVER*/
     folio[j] = '\0';
 }
 
-bool guardarPregunta() /*<<<<<<< OCTAVIO ESTA TRABAJANDO EN ESTE NO MOVER*/
+bool guardarPregunta()
 {
     char seguir[3];
     int i;
@@ -324,13 +327,37 @@ bool guardarPregunta() /*<<<<<<< OCTAVIO ESTA TRABAJANDO EN ESTE NO MOVER*/
             printf(ROJO"Ingrese si/no\n"NORMAL);
         }
 
-    } while (strcmp(seguir, "si") != 0 && strcmp(seguir, "no") != 0);
+    }while (strcmp(seguir, "si") != 0 && strcmp(seguir, "no") != 0);
 
     if(strcmp(seguir, "si") == 0)
+    {
         return true;
+    }
     else
+    {
         return false;
+    }
 }
 
-/*<-------------------- falta lo de los consultorios*/
+void guardarPaciente(FILE *archivo, Paciente *p) /*FUNCIONA NO MOVER*/
+{
+    int lugar;
+    bool cont = true;
+    Paciente pLeer;
+
+    rewind(archivo);
+    lugar = 0;
+    while(fread(&pLeer, sizeof(Paciente), 1, archivo) == 1 && cont)
+    {
+        if(pLeer.servicio == -1)
+            cont = false;
+        else
+        	lugar++;
+    }
+    rewind(archivo);
+    fseek(archivo, sizeof(Paciente) * lugar, SEEK_SET);
+    fwrite(p, sizeof(Paciente), 1, archivo);
+
+}
+
 #endif

@@ -12,6 +12,9 @@
 #define VERDEINT "\033[1;32m"
 #define BLANCO "\033[0;37m"
 #define ROJO "\033[1;31m"
+#define CYAN "\033[1;36m"
+
+#include <time.h>
 
 typedef struct
 {
@@ -32,6 +35,8 @@ typedef struct
     char genero;
     char sintomas[MAX_DIR];
     int numConsultorios;
+    /*time_t hrsRegistro;*/
+
 } Paciente;
 
 #endif
