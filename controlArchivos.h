@@ -15,14 +15,12 @@ void buscarEditarPacientes(FILE *, size_t *);
 void eliminarRegistro(FILE *, int *);
 void mostrarSintomas(char *);
 void editarP(FILE *, int *, Paciente );
-
 bool buscarFolio(char *, FILE *, int *);
-
 FILE *cargarPacientes(size_t *);
 FILE *iniArchivoP();
 
 
-void listarPacientes(FILE *archivo, size_t *tamano) /*FUNCIONA NO MOVER*/
+void listarPacientes(FILE *archivo, size_t *tamano)
 {
     Paciente p;
     char in;
@@ -66,17 +64,21 @@ void buscarEditarPacientes(FILE *archivoBdPacientes, size_t *tamano)
     system("cls");
     do
     {
+        rewind(archivoBdPacientes);
         lugar = 0;
         do
         {
             printf("a. Buscar por FOLIO\n");
             printf("b. Buscar por NOMBRE\n");
-            printf("Ingrese la opcion: ");
+            printf(">>>");
             fflush(stdin);
 
             scanf("%c", &opcion);
             if (opcion != 'a' && opcion != 'b')
-                printf(ROJO"Porfavor ingrese 'a' o 'b'"NORMAL);
+            {
+                system("cls");
+                printf(ROJO"Porfavor ingrese 'a' o 'b'\n"NORMAL);
+            }
 
         }while (opcion != 'a' && opcion != 'b');
         

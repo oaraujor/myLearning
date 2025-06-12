@@ -1,7 +1,6 @@
 #include "structuras.h"
 #include "utilidades.h"
 #include "controlArchivos.h"
-
 #include <stdio.h>
 #include <stdbool.h>
 
@@ -37,7 +36,8 @@ int main()
             {
                 case '1':
                     if(tamanoP < MAX_PACIENTES)
-                        leerPaciente(archivoBdPacientes, &tamanoP);/*<<<<<<< OCTAVIO ESTA TRABAJANDO EN ESTE NO MOVER*/
+                        leerPaciente(archivoBdPacientes, &tamanoP);
+                        system("cls");
                     else
                         printf("ERROR: Maxima capacidad de pacientes!\n");    
                     break;
@@ -45,7 +45,7 @@ int main()
                     buscarEditarPacientes(archivoBdPacientes, &tamanoP);
                     break;
                 case '3':
-                    listarPacientes(archivoBdPacientes, &tamanoP);/*<<<<<<< OCTAVIO ESTA TRABAJANDO EN ESTE NO MOVER*/
+                    listarPacientes(archivoBdPacientes, &tamanoP);
                     break;
                 case '4':
                     eliminarPacientes(archivoBdPacientes, &tamanoP);

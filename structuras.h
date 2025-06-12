@@ -7,7 +7,6 @@
 #define MAX_FOLIO 15
 #define DIR_BASE "data/pacientes/"
 #define EXTENSION_P ".txt"
-
 #define NORMAL "\033[0m"
 #define VERDEINT "\033[1;32m"
 #define BLANCO "\033[0;37m"
