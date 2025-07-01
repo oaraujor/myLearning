@@ -25,7 +25,7 @@ fn main() { // functions start with fn <name> (params)
     let is_true = true; // true or false for boolen data types
     let my_grade = 'A'; //char tyoe declaration
 
-    //math
+    //math logic-----------------------------------------------------
 
     let num_1: f32 = 1.111111111111111;
     println!("f32: {}", num_1 + 0.111111111111111); //check precision of f point numbers
@@ -44,12 +44,12 @@ fn main() { // functions start with fn <name> (params)
     num_3 += 1; //same as C
     println!("num_3 + 1 = {}", num_3);
 
-    //generate random values
+    //generate random values-----------------------------------------------------
 
     let rand_num = rand::rng().random_range(1..101);
     println!("Random number from 1-101: {}", rand_num);
 
-    //conditionals
+    //conditionals-----------------------------------------------------
 
     let age = 886;
     if (age >= 1) && (age <= 18){
@@ -71,7 +71,7 @@ fn main() { // functions start with fn <name> (params)
     };
     println!("Can vote: {}", can_vote);
 
-    //match
+    //match-----------------------------------------------------
     let age2 = 25;
     match age2{
         1..=18 => println!("Underage"), // .. defines a range
@@ -89,7 +89,7 @@ fn main() { // functions start with fn <name> (params)
         Ordering::Equal => println!("just enough to vote") //from the ordering crate Equal that &voting_age
     };
 
-    //arrays
+    //arrays-----------------------------------------------------
     let arr_1 = [1,2,3,4,5,6,7,8,9];
     println!("1st: {}", arr_1[0]);
     println!("len: {}", arr_1.len());
@@ -107,7 +107,7 @@ fn main() { // functions start with fn <name> (params)
         loop_idx += 1;
     }
 
-    // while loop
+    // while loop-----------------------------------------------------
     
     let mut loop_idx = 0;
     while loop_idx < arr_1.len(){
@@ -115,13 +115,13 @@ fn main() { // functions start with fn <name> (params)
         loop_idx += 1;
     }
 
-    //for loops
+    //for loops-----------------------------------------------------
 
     for val in arr_1.iter(){ //.iter() function to itrerate through values in the array
         println!("Val: {}", val);
     }
 
-    //tuples
+    //tuples-----------------------------------------------------
 
     let my_tuple: (u8, String, f64) = (47, "Derek".to_string(), 50_000.00);
 
@@ -129,7 +129,7 @@ fn main() { // functions start with fn <name> (params)
     let (v1,v2,v3) = my_tuple; //asigning data from one tuple to another
     println!("Age: {}", v1);
 
-    //strings
+    //strings-----------------------------------------------------
     // 2 types of strings
     // String  - vector of bytes that can be changed
     // &str - point to string and allows veiwing of strings
@@ -172,12 +172,50 @@ fn main() { // functions start with fn <name> (params)
     st5.clear();//clears st5
     println!("st5: {}", st5);
 
-    let st7 = String::from("Just Some");
-    let st8 = String::from("Words in ABC");
+    let st7 = String::from("Just Some"); //heap allocated String
+    let st8 = String::from("Words in ABC"); //heap allocated String
 
     let st9 = st7.clone() + &st8;
+        // Concatenate st7 and st8 into a new String (st9).
+        // st7 is cloned to preserve ownership, since using '+' would otherwise move st7.
+        // st8 is passed as a string slice (&st8) to avoid moving it.
 
     println!("st7: {} + st8: {} -> st9: {}", st7, st8, st9);
 
+    //Type casting -----------------------------------------------------
+
+    let int_u8: u8 = 5;
+    let int2_u8: u8 = 4;
+
+    let int3_u32: u32 = (int_u8 as u32) + (int2_u8 as u32); //converting from unsigned 8bits to 32 bits
+
+    // enums ------------------------------------------------------------
+    enum Days{ //enum just like in C
+        Monday,
+        Tuesday,
+        Wednesday,
+        Thursday,
+        Friday,
+        Saturday,
+        Sunday
+    }
+
+    impl Days { //we can implement "functions" to types like enums
+        fn is_weekend(&self) -> bool { // declaring a function with output bool type
+            match self {
+                Days::Saturday | Days::Sunday => true,
+                _ => false
+            }
+        }
+    }
+
+    let day: Days = Days::Monday; //declare day type
+    println!("is weekend: {}", day.is_weekend()); // use the function
+
+    //vectors ----------------------------------------------------
+    //they are like arrays that can grow if mut, they only store things of the same types
+
+    let vec1: Vec<i32> = Vec::new(); //declaring a new vector
+    vec1.push(44);
 
 }
