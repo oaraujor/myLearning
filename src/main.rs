@@ -1,11 +1,43 @@
 #![allow(unused)]
 
 use std::io;
-use std::sync::atomic::spin_loop_hint; //importing libraries
 use rand::Rng; // you have to specify vercion in the dependency section of cargo.toml
 use std::io::{Write, BufReader, BufRead, ErrorKind};
 use std::fs::File;
 use std::cmp::Ordering;
+use std::ops::Add; // Import the Add trait, which defines the + operator
+
+//functions ----------------------------------------------
+
+fn get_sum(x: i32, y: i32){
+    println!("{} + {} = {}", x, y, x+y);
+}
+
+fn get_sum2(x1: i32, x2: i32) -> i32{
+    x1 + x2
+    //return x1 + x2 also can be done
+}
+
+fn get_sum3(z: i32, w: i32) -> (i32, i32){
+    return (z+1, w+1);
+    //return x1 + x2 also can be done
+}
+
+fn sum_list(list: &[i32]) -> i32 { //passing a vector "array"
+    let mut sum: i32 = 0;
+    for &item in list.iter() {
+        sum += item;
+    }
+    return sum;
+}
+
+//Generics ---------------------------------------
+// Generic function that takes two parameters of the same type T
+// T must implement the Add trait, meaning it supports the + operator
+// Output = T ensures the result of x + y is the same type T
+fn get_sum_gen<T:Add<Output = T>>(x: T, y: T) -> T {
+    return x + y;
+}
 
 fn main() { // functions start with fn <name> (params)
     println!("What is your name?"); //macro for printig lines on terminals
@@ -212,10 +244,83 @@ fn main() { // functions start with fn <name> (params)
     let day: Days = Days::Monday; //declare day type
     println!("is weekend: {}", day.is_weekend()); // use the function
 
-    //vectors ----------------------------------------------------
-    //they are like arrays that can grow if mut, they only store things of the same types
+    // Vectors ----------------------------------------------------
+    // Vectors are growable arrays that store elements of the same type.
+    // They are allocated on the heap and can dynamically resize when declared as mutable.
 
-    let vec1: Vec<i32> = Vec::new(); //declaring a new vector
-    vec1.push(44);
+    let vec1: Vec<i32> = Vec::new(); // Declare a new, empty, immutable vector
+    let mut vec2 = vec![1, 2, 3, 4, 5]; // Create a mutable vector with initial values
+
+    vec2.push(6); // Append 6 value to the end of the vector
+
+    println!("1st from vec2: {}", vec2[0]); // Access the element at index 0 (panics if out of bounds)
+
+    let second: &i32 = &vec2[1]; // Create an immutable reference to the element at index 1
+    println!("Second: {}", second);
+
+    match vec2.get(1) {
+        Some(second) => println!("2nd: {}", second), // Safely access index 1 (returns Option<&T>)
+        None => println!("No 2nd value") // Handles the case when the index is out of bounds
+    }
+
+    for i in &mut vec2 { // Iterate mutably and double each element in place
+        *i *= 2;
+    }
+
+    for i in &vec2 { // Iterate immutably and print each value
+        println!("Vec2: {}", i);
+    }
+
+    println!("Length of the vector: {}", vec2.len()); // Get the number of elements in the vector
+    println!("Remove and return last value: {:?}", vec2.pop()); // Remove and return the last element as Option<i32>
+
+
+    //functions --------------------------------------
+    
+    get_sum(5, 7);
+
+    println!("{}", get_sum2(7, 7));
+
+    let (val_1, val_2) = get_sum3(7, 3);
+    println!("Nums: {} {}", val_1, val_2);
+
+    let num_list = vec![1,2,3,4,5,6,7];
+    println!("Sum of vector items: {}", sum_list(&num_list));
+
+    //generics -----------------------------------------------
+
+    println!("5 + 4 = {}", get_sum_gen(5, 4));
+    println!("5.5 + 4.6 = {}", get_sum_gen(5.5, 4.6));
+
+    //ownership -----------------------------------------------------
+
+    //Stack: Stores value in a LIFO format
+    // Data on the stack must have a defined fixed size
+
+    //Heap: When putting daya on the heap you request a
+    // certain amount of space. The OS finds space available and returns
+    // and address for that space called a pointer
+
+    // RULES TO OWNERSHIP
+        // 1. Each value has a variable thats called its owner
+        // 2. There is only one owner at a time
+        // 3. When the owner goes out of scope the value dissapears
+
+    let word = String::from("World");
+
+    //let word1 = word;
+    //println!("Hello {}", word); <-- this cannot be performed since
+    //we have borrowed the value or the pointer or word to word1,
+    //so it got dropped
+    
+    let word2 = word.clone(); 
+    //this on the other hand, like the operator suggests, the String from word
+    // gets cloned into word2, so now word and word2 have the same contents
+
+    println!("Word: {}", word);
+    println!("Word2: {}", word2);
+
+    //this does not apply to interger, floats, booleans, char, tuples
+    //it applies to arrays, vectors, strings
 
 }
