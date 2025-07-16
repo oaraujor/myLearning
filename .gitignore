@@ -1,3 +1,4 @@
+target/
 .vscode/
 *.json
 *.docx
@@ -12,4 +13,3 @@
 *.win
 *.gch
 *.rar
-*.exe
