@@ -1,1 +1,15 @@
 /target
+.vscode/
+*.json
+*.docx
+*.exe
+*.o
+*.txt
+*.dat
+*.dev
+*.ico
+*.layout
+*.res
+*.win
+*.gch
+*.rar
