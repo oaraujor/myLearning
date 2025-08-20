@@ -1,24 +1,26 @@
 #include "linkedList.h"
 
 bool contRunning(const char *);
-void showOptions();
+void showMenu(const char *);
 
 
 int main()
 {
 	NODE_LL* listNumbers;
 	listNumbers = NULL; //empty list
-	int option;
+	int menuOption;
 	int value;
+	//size_t sizeofList;
 	bool contMenu, contAppend;
 
+	//sizeofList = 0;
 	contMenu = true;
 	while(contMenu) {
 		system("clear");
 		printList(&listNumbers);
-		showOptions();
-		scanf("%d", &option);
-		switch(option) {
+		showMenu("txtFiles/mainMenu.txt");
+		scanf("%d", &menuOption);
+		switch(menuOption) {
 			case 1:
 				do {
 					printf("Enter the int value to append to the beggining of the list: ");
@@ -52,12 +54,28 @@ int main()
 	return 0;
 }
 
-void showOptions() {
-	printf("Linked List of Integer Numbers\n");
-	printf("\t1) Append from Front [Here]->[#]->[#]->NULL\n");
-	printf("\t2) Append from End [#]->[#]->[Here]->NULL\n");
-	printf("\t3) Exit\n");
-	printf("\t>>");
+void showMenu(const char *filename) {
+	/*
+	*/
+	FILE* fileMenu;
+	fileMenu = fopen(filename, "r");
+	char buffer[256];
+	size_t count = 0;
+	
+	if (fileMenu != NULL){
+		while(fgets(buffer, sizeof(buffer), fileMenu) != NULL) {
+			if (count != 0) {
+				printf("\t%zu - ", count);
+			}
+			printf("%s", buffer);
+			count++;
+		}
+	}
+	else {
+		ERROR_MSG
+	}
+	printf("\n\t>>> ");
+	fclose(fileMenu);
 }
 
 bool contRunning(const char *message) {
