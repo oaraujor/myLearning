@@ -13,3 +13,4 @@ target/
 *.win
 *.gch
 *.rar
+build/
