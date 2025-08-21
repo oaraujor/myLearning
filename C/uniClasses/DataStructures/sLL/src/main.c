@@ -45,7 +45,19 @@ int main()
 				break;
 				
 				case 4:
-					//REMOVE FROM BEGGINING
+					do {
+						system("clear");
+						printf("DELETING THE FIRST ELEMENT OF THE LIST...\n");
+						status = rmBegNodeOfList(&listNumbers);
+						if(status == 1){
+							printList(&listNumbers);
+						}
+						else{
+							printf("Could not delete the first element of the list\n");
+							//TODO: implement deleting the last when return 0;
+						}
+						contAppend = contRunning("Delete another element?\n");
+					}while(contAppend);
 					break;
 
 				case 5:
