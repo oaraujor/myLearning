@@ -9,11 +9,11 @@ int main()
 	NODE_LL* listNumbers;
 	listNumbers = NULL; //empty list
 	int menuOption;
-	int value;
-	//size_t sizeofList;
+	int value, status;
+	size_t sizeofList;
 	bool contMenu, contAppend;
 
-	//sizeofList = 0;
+	sizeofList = 0;
 	contMenu = true;
 	while(contMenu) {
 		system("clear");
@@ -31,6 +31,10 @@ int main()
 				break;
 
 			case 2:
+				//INSERT MIDDLE
+				break;
+			
+			case 3:
 				do {
 					system("clear");
 					printf("Enter the int value to append to the end list: ");
@@ -39,11 +43,35 @@ int main()
 					contAppend = contRunning("Append more numbers?\n");
 				}while(contAppend);
 				break;
+				
+				case 4:
+					//REMOVE FROM BEGGINING
+					break;
 
-			case 3:
-				contMenu = false;
-				killList(&listNumbers);
-				break;
+				case 5:
+					//REMOVE FROM THE MIDDLE
+					break;
+
+				case 6:
+					do {
+						system("clear");
+						printf("DELETING THE LAST ELEMENT OF THE LIST...\n");
+						status = rmEndNodeOfList(&listNumbers);
+						if(status == 1){
+							printList(&listNumbers);
+						}
+						else{
+							printf("Could not delete last element of the list\n");
+							//TODO: implement deleting the last when return 0;
+						}
+						contAppend = contRunning("Delete another element?\n");
+					}while(contAppend);
+					break;
+
+				case 7:
+					contMenu = false;
+					killList(&listNumbers);
+					break;
 
 			default:
 				printf("Unknown Selection!\n");
@@ -56,7 +84,14 @@ int main()
 
 void showMenu(const char *filename) {
 	/*
+		Desc:	Function to show a menu from a txt file.
+				Fucntion will skip the first line as this like is the tittle of the menu.
+				After the first file, it will treat each line as options appending 1,2,3 ... to eachline on stdout.
+		
+		args:	const char *filename : path to a file to be displayed
+		Return: Nothing to be returned.
 	*/
+
 	FILE* fileMenu;
 	fileMenu = fopen(filename, "r");
 	char buffer[256];
@@ -79,6 +114,15 @@ void showMenu(const char *filename) {
 }
 
 bool contRunning(const char *message) {
+	/*
+		Desc:	Function to get binary input (yes\no)
+		args:	const char *message : message to be displayed to stdout.
+		Return:
+				True : If user selects yes
+				False : If user selects no
+
+	*/
+
 	int selection;
 	do {
 		printf("%s", message);
