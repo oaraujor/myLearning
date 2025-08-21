@@ -7,20 +7,21 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-typedef struct node {
+typedef struct NODE_LL {
 	int value;
-	struct node *next;
+	struct NODE_LL *next;
 } NODE_LL;
 
 void apndBegOfList(NODE_LL**, int*);
 void apndEndOfList(NODE_LL**, int*);
-void apndMidOfList(NODE_LL **);
+void apndMidOfList(NODE_LL **, int *, unsigned int *);// <----- to do
+
 int rmBegNodeOfList(NODE_LL **);
 int rmEndNodeOfList(NODE_LL **);
-int rmMidNodeOfList(NODE_LL **);
+int rmMidNodeOfList(NODE_LL **, int *);
+
 void printList(NODE_LL** );
 void killList(NODE_LL **);
-
 
 void apndBegOfList(NODE_LL** list, int *value) {
 	/*
@@ -81,35 +82,41 @@ void apndEndOfList(NODE_LL **list , int * value)
 
 }
 
-/*
-void insertMiddle(NODE_LL **list, int *value, size_t *pos){
-	*
+
+void apndMidOfList(NODE_LL **list, int *value, unsigned int *pos) {
+	/*
 		Desc: Function to isert a value somewhere in the middle of the linked list.
 		Visual: [0]->[1]->[Inserts Here]->[2]->[]->[]->NULL
 		
 		args:
 			NODE_LL **list : address to the head of the list
-			int *value - address of the int variable to be stored
-			size_t *pos - position in the linked list to be inserted in
+			int *value : address of the int variable to be stored
+			size_t *pos : position in the linked list to be inserted in
 		return: Nothing to be returned
-	*
-	size_t count = 0;
-	NODE_LL *newNode, *current, *prev; 
+	*/
+	NODE_LL *newNode, *current, *prev;
+	unsigned int count = 0;
 	newNode = malloc(sizeof(NODE_LL));
 	if(newNode != NULL) {
 		newNode->value = *value;
 		newNode->next = NULL;
 		current = *list;
-		while(current != NULL && count < *pos) {
-			if(count == *pos){
-				
+		prev = NULL;
+		while(current != NULL) {
+			if(count != *pos){
+				prev = current;
+				current = current->next;
+				count++;
 			}
 			else{
-				current = current->next;
+				newNode->next = current;
+				prev->next = newNode;
+				(*pos)++;
 			}
 		}
-		if(current = NULL) { // if list is empty, the new node is the first element
+		if(current == NULL) { // if list is empty, the new node is the first element
 			*list = newNode;
+			(*pos)++;
 		}
 	}
 	else{
@@ -118,17 +125,31 @@ void insertMiddle(NODE_LL **list, int *value, size_t *pos){
 
 	return;
 }
-*/
+
 
 int rmBegNodeOfList(NODE_LL **list) {
 	/*
 		Desc: Function to remove the first element of the list
 		Visual: [Removes This]->[]->[]->NULL
+		list->[prev]->[curr]->[]->NULL
 		args:
 			NODE_LL *list : address to the head of the list
-		return: 1 if successful | 0 if the list was empty
+		return: 1 if sucessfull | 0 if the list was empty
 	*/
-	return 0;
+
+	NODE_LL *curr, *prev;
+	prev =  NULL;
+	curr = NULL;
+	if (*list != NULL) {
+		prev = *list;
+		curr = prev->next;
+		*list = curr;
+		free(prev);
+		return 1;
+	}
+	else {
+		return 0;
+	}
 }
 
 int rmEndNodeOfList(NODE_LL **list) {
@@ -137,7 +158,7 @@ int rmEndNodeOfList(NODE_LL **list) {
 		Visual: []->[]->[Removes This]->NULL
 		args:
 			NODE_LL *list : address to the head of the list
-		return: 1 if successful | 0 if the list was empty
+		return: 1 if sucessfull | 0 if the list was empty
 	*/
 
 	NODE_LL *prev, *curr, *temp;
@@ -157,14 +178,29 @@ int rmEndNodeOfList(NODE_LL **list) {
 	return 0;
 }
 
-int rmMidNodeOfList(NODE_LL **list) {
+int rmMidNodeOfList(NODE_LL **list, int *value) {
 	/*
-		Desc: Function to remove some element in the middle of the list
-		Visual: []->[Removes Some]->[]->[]->NULL
+		Desc: Function to remove the last element of the list
+		Visual: []->[]->[Removes This]->NULL
 		args:
 			NODE_LL *list : address to the head of the list
-		return: 1 if successful | 0 if the list was empty
+		return: 1 if sucessfull | 0 if the list was empty
 	*/
+
+	NODE_LL *curr, *prev, *temp;
+	prev = *list;
+	curr = prev->next;
+
+	while(curr != NULL && curr->value != value) {
+		prev = curr;
+		curr = curr->next;
+	}
+	if (curr != NULL) {
+		temp = curr;
+		prev->next = curr->next;
+		free(temp);
+		return 1;
+	}
 	return 0;
 }
 
@@ -181,10 +217,12 @@ void printList(NODE_LL** list) {
 	NODE_LL *curr;
 	
 	curr = *list;
+	int i = 0;
 
 	while(curr != NULL) {
-		printf("[%d]-->", curr->value);
+		printf("[%d|%d]-->", i, curr->value);
 		curr = curr->next;
+		i++;
 	}
 	printf("NULL\n");
 }
