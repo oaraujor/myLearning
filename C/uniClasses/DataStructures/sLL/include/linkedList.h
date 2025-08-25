@@ -181,17 +181,18 @@ int rmEndNodeOfList(NODE_LL **list) {
 int rmMidNodeOfList(NODE_LL **list, int *value) {
 	/*
 		Desc: Function to remove the last element of the list
-		Visual: []->[]->[Removes This]->NULL
+		Visual: []->[]->[Removes This]->[]->[]->NULL
 		args:
 			NODE_LL *list : address to the head of the list
+			int *value : address to the value to be deleted
 		return: 1 if sucessfull | 0 if the list was empty
 	*/
 
 	NODE_LL *curr, *prev, *temp;
 	prev = *list;
-	curr = prev->next;
+	curr = (*list)->next;
 
-	while(curr != NULL && curr->value != value) {
+	while(curr != NULL && curr->value != *value) {
 		prev = curr;
 		curr = curr->next;
 	}

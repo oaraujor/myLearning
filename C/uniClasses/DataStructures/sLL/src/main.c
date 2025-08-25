@@ -1,4 +1,5 @@
 #include "linkedList.h"
+#include "colors.h"
 
 bool contRunning(const char *);
 void showMenu(const char *);
@@ -10,10 +11,9 @@ int main()
 	listNumbers = NULL; //empty list
 	int menuOption;
 	int value, status;
-	size_t sizeofList;
+	unsigned int sizeofList = 0, position;
 	bool contMenu, contAppend;
 
-	sizeofList = 0;
 	contMenu = true;
 	while(contMenu) {
 		system("clear");
@@ -23,60 +23,83 @@ int main()
 		switch(menuOption) {
 			case 1:
 				do {
-					printf("Enter the int value to append to the beggining of the list: ");
+					printList(&listNumbers);
+					printf(GREEN"Enter the int value to append to the beggining of the list: "NORMAL);
 					scanf("%d", &value);
 					apndBegOfList(&listNumbers, &value);
-					contAppend = contRunning("Append more numbers?\n");
+					contAppend = contRunning(CYAN"Append more numbers?\n"NORMAL);
 				}while(contAppend);
 				break;
 
 			case 2:
-				//INSERT MIDDLE
+				do {
+					printList(&listNumbers);
+					printf(GREEN"Enter the int value to append to the the list: "NORMAL);
+					scanf("%d", &value);
+					printf(GREEN"Enter the position where you want to append it: "NORMAL);
+					scanf("%u", &position);
+					apndMidOfList(&listNumbers, &value, &position);
+					contAppend = contRunning(CYAN"Append more numbers?\n"NORMAL);
+				}while(contAppend);
 				break;
 			
 			case 3:
 				do {
+					printList(&listNumbers);
 					system("clear");
-					printf("Enter the int value to append to the end list: ");
+					printf(GREEN"Enter the int value to append to the end list: "NORMAL);
 					scanf("%d", &value);
 					apndEndOfList(&listNumbers, &value);
-					contAppend = contRunning("Append more numbers?\n");
+					contAppend = contRunning(CYAN"Append more numbers?\n"NORMAL);
 				}while(contAppend);
 				break;
 				
 				case 4:
 					do {
 						system("clear");
-						printf("DELETING THE FIRST ELEMENT OF THE LIST...\n");
+						printf(YELLOW"DELETING THE FIRST ELEMENT OF THE LIST...\n"NORMAL);
 						status = rmBegNodeOfList(&listNumbers);
 						if(status == 1){
 							printList(&listNumbers);
 						}
 						else{
-							printf("Could not delete the first element of the list\n");
+							printf(RED"Could not delete the first element of the list\n"NORMAL);
 							//TODO: implement deleting the last when return 0;
 						}
-						contAppend = contRunning("Delete another element?\n");
+						contAppend = contRunning(CYAN"Delete another element?\n"NORMAL);
 					}while(contAppend);
 					break;
 
 				case 5:
-					//REMOVE FROM THE MIDDLE
+					do {
+						printList(&listNumbers);
+						printf(GREEN"Enter the int value to delete from the the list: "NORMAL);
+						scanf("%d", &value);
+						printf(YELLOW"DELETING THE FIRST ELEMENT OF THE LIST...\n"NORMAL);
+						status = rmMidNodeOfList(&listNumbers, &value);
+						if (status == 1) {
+							printList(&listNumbers);
+						}
+						else{
+							printf(RED"Could not delete value: %d"NORMAL, value);
+						}
+						contAppend = contRunning(CYAN"Delete more numbers?\n"NORMAL);
+					}while(contAppend);
 					break;
 
 				case 6:
 					do {
 						system("clear");
-						printf("DELETING THE LAST ELEMENT OF THE LIST...\n");
+						printf(YELLOW"DELETING THE LAST ELEMENT OF THE LIST...\n"NORMAL);
 						status = rmEndNodeOfList(&listNumbers);
 						if(status == 1){
 							printList(&listNumbers);
 						}
 						else{
-							printf("Could not delete last element of the list\n");
+							printf(RED"Could not delete last element of the list\n"NORMAL);
 							//TODO: implement deleting the last when return 0;
 						}
-						contAppend = contRunning("Delete another element?\n");
+						contAppend = contRunning(CYAN"Delete another element?\n"NORMAL);
 					}while(contAppend);
 					break;
 
@@ -86,7 +109,7 @@ int main()
 					break;
 
 			default:
-				printf("Unknown Selection!\n");
+				printf(RED"Unknown Selection!\n"NORMAL);
 				break;
 		}
 
