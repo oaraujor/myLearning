@@ -14,156 +14,259 @@
 */
 
 #include "vuelos.h"
-#include <stdio.h>
-#include <stdlib.h>
 
-int leerEntero(int, int, const char*);
+int leerEntero(int , int, const char* , const char* );
 void inicializarPlazas(Destino*);
-int procesarPedidos(Destino* , Pedido* , int);
+void procesarPedidos(Destino* , Pedido* , int);
 void mostrarPlazasRestantes(Destino*);
 void mostrarPedidosRechazados(Pedido* , int);
-void mostrarPedidosRechazados(Pedido* , int );
+void realizarPedido(Pedido *, int *);
+bool continuarSiNo(const char *);
+void enterEspera();
+void mostrarTodosLosPedidos(Pedido* , int);
 
 
 int main() {
+
+    bool menuContinuar;
+    char opcion;
     Destino destinos[DESTINOS];
     Pedido pedidos[MAX_PEDIDOS];
-    int numPedidos = 0, continuar = 1;
+    int numPedidos = 0;
+    menuContinuar = true;
 
-    // Inicializar plazas
+    system("clear");
     inicializarPlazas(destinos);
 
-    // Ingreso de pedidos
-    printf("\n--- Ingreso de pedidos ---\n");
-    while (continuar && numPedidos < MAX_PEDIDOS) {
-        pedidos[numPedidos].numeroPedido = leerEntero(1, 9999, "Ingrese número de pedido");
-        pedidos[numPedidos].destino = leerEntero(1, DESTINOS, "Ingrese destino");
-        pedidos[numPedidos].vuelo = leerEntero(1, VUELOS, "Ingrese vuelo");
-        pedidos[numPedidos].cantidadPasajes = leerEntero(1, 500, "Ingrese cantidad de pasajes requeridos");
-        pedidos[numPedidos].rechazado = 0; // default
-        numPedidos++;
-        printf("¿Desea ingresar otro pedido? (1=Sí, 0=No): ");
-        scanf("%d", &continuar);
-        while(getchar() != '\n');
-    }
 
-    // Procesar pedidos
-    procesarPedidos(destinos, pedidos, numPedidos);
+    do {
+        system("clear");
+        printf("---Menu--\n");
+        printf("a) Realizar un Pedido de Plazas\n");
+        printf("b) Procesar Todos los Pedidos\n");
+        printf("c) Mostrar Informacion de las Plazas y Destinos\n");
+        printf("d) Salir\n");
+        printf("Seleccion de opcion: \n");
+        fflush(stdin);
+        opcion = getchar();
 
-    // Informes
-    mostrarPlazasRestantes(destinos);
-    mostrarPedidosRechazados(pedidos, numPedidos);
+        switch (opcion) {
+
+            case 'a':
+                realizarPedido(pedidos, &numPedidos);
+                break;
+
+            case 'b':
+                procesarPedidos(destinos, pedidos, numPedidos);
+                printf("PEDIDOS PROCESADOS\n");
+                enterEspera();
+                break;
+
+            case 'c':
+                system("clear");
+                fflush(stdin);
+                mostrarTodosLosPedidos(pedidos, numPedidos);
+                printf("\n");
+                mostrarPedidosRechazados(pedidos, numPedidos);
+                printf("\n");
+                mostrarPlazasRestantes(destinos);
+                printf("\n");
+
+                enterEspera();
+                break;
+
+            case 'd':
+                menuContinuar = false;
+                printf("Terminando programa...\n");
+                break;
+
+            default:
+                system("clear");
+                printf(ROJO"OPCION ERRONEA!"NORMAL);
+                break;
+                
+        }
+
+    } while(menuContinuar);
 
     return 0;
 }
 
 // Función para validar la entrada de un entero en rango
-int leerEntero(int min, int max, const char* mensaje) {
-    int valor, ok;
+int leerEntero(int min, int max, const char* mensajeExito, const char* mensajeError) {
+    char aux[' '];
+    int i, auxLen, num;
+    bool numCorrecto;
+
     do {
-        printf("%s (%d-%d): ", mensaje, min, max);
-        ok = scanf("%d", &valor);
-        while(getchar() != '\n'); // Limpiar buffer
-        if (ok == 1 && valor >= min && valor <= max)
-            return valor;
-        printf("Valor inválido. Intente de nuevo.\n");
-    } while (1);
-
-    /*
-    #include<stdio.h>
-//#include<stdlib.h>
-#include<string.h>
-#include<ctype.h>
-char Aux[' '];
-int i,p,y,num;
-int main()
-{
-	do{
-        printf("\n Introduzca un valor numerico: ");	
-        fflush(stdin);
-        gets(Aux);//se lee los datos introducidos
-        y = strlen(Aux);
-        for(i=0;i < y;i++)
-        {
-            if(isdigit(Aux[i]))
-                p = 1;	
-            else
-                p = 0;
-            if(p == 0)
-            {
-            printf("\n\n Error,dato mal introducido\n\n ");
-            break;
+        do {
+            printf(VERDE"%s"NORMAL, mensajeExito);
+            fflush(stdin);
+            gets(aux);
+            auxLen = strlen(aux);
+            for(i = 0; i < auxLen; i++) {
+                if(isdigit(aux[i])) {
+                    numCorrecto = true;
+                }
+                else {
+                    numCorrecto = false;
+                }
+                if(numCorrecto == false) {
+                    system("clear");
+                    printf(ROJO"%s\n"NORMAL, mensajeError);
+                    break;
+                }
             }
-        }
-        if(y==0)
-            p=0;
-	}while(p==0);
+            if(auxLen == 0) {
+                numCorrecto = false;
+            }
+        }while(!numCorrecto);
 
-    num = atoi(Aux);
-    printf("\n\n\n\t Valor leido: %d",num);
-}
-    */
+        num = atoi(aux);
+        if(!VALIDAR_RANGO(num, min, max)) {
+            system("clear");
+            printf(ROJO"%s\n"NORMAL, mensajeError);
+        }
+    }while(!VALIDAR_RANGO(num, min, max));
+        
+    return num;
 }
 
 // Función para inicializar plazas disponibles
 void inicializarPlazas(Destino* destinos) {
-    for (int i = 0; i < DESTINOS; i++) {
-        for (int j = 0; j < VUELOS; j++) {
-            char msg[50];
-            sprintf(msg, "Ingrese plazas para destino %d, vuelo %d", i+1, j+1);
-            destinos[i].vuelos[j].plazas = leerEntero(0, 500, msg);
+    int i = 0, j = 0;
+
+    for (i = 0; i < DESTINOS; i++) {
+        for (j = 0; j < VUELOS; j++) {
+            system("clear");
+            printf("Inicializando plazas\n");
+            printf(VERDE"Destino #%d | Vuelo #%d\n"NORMAL, i + 1, j + 1);
+            ((destinos + i)->vuelos + j)->plazas = leerEntero(1, 500, "Ingrese el numero de asientos/plazas (1 - 500): ", "ERROR, NUMERO INGRESADO NO VALIDO (1 - 500)!");
         }
     }
 }
 
 // Procesa pedidos y actualiza destinos usando apuntadores
-int procesarPedidos(Destino* destinos, Pedido* pedidos, int numPedidos) {
-    int rechazados = 0;
-    for (int i = 0; i < numPedidos; i++) {
-        int d = pedidos[i].destino - 1;
-        int v = pedidos[i].vuelo - 1;
-        // Validar índices
-        if (d < 0 || d >= DESTINOS || v < 0 || v >= VUELOS) {
-            printf("Pedido %d: Destino o vuelo inválido. Rechazado.\n", pedidos[i].numeroPedido);
-            pedidos[i].rechazado = 1;
-            rechazados++;
-            continue;
+void procesarPedidos(Destino* destinos, Pedido* pedidos, int numPedidos) {
+    int i = 0;
+    int d, v;
+    for (i = 0; i < numPedidos; i++) {
+        d = (pedidos + i)->destino - 1;
+        v = (pedidos + i)->vuelo - 1;
+        if ((pedidos + i)->cantidadPasajes <= ((destinos + d)->vuelos + v)->plazas) {
+            ((destinos + d)->vuelos + v)->plazas -= (pedidos + i)->cantidadPasajes;
+            (pedidos + i)->rechazado = 0; 
         }
-        if (pedidos[i].cantidadPasajes <= destinos[d].vuelos[v].plazas) {
-            destinos[d].vuelos[v].plazas -= pedidos[i].cantidadPasajes;
-            pedidos[i].rechazado = 0;
-        } else {
-            printf("Pedido %d: NO HAY CANTIDAD DE PLAZAS DISPONIBLES\n", pedidos[i].numeroPedido);
-            pedidos[i].rechazado = 1;
-            rechazados++;
+        else {
+            system("clear");
+            printf("Pedido %d: NO HAY CANTIDAD DE PLAZAS DISPONIBLES\n", (pedidos + i)->numeroPedido);
+            (pedidos + i)->rechazado = 1;
         }
     }
-    return rechazados;
 }
 
 // Mostrar plazas sobrantes
 void mostrarPlazasRestantes(Destino* destinos) {
-    printf("\n--- Plazas sobrantes por vuelo ---\n");
-    for (int i = 0; i < DESTINOS; i++) {
-        for (int j = 0; j < VUELOS; j++) {
-            printf("Destino %d, Vuelo %d: %d plazas\n", i+1, j+1, destinos[i].vuelos[j].plazas);
+    int i = 0, j = 0;
+    printf("--- Plazas sobrantes por vuelo ---\n");
+    for (i = 0; i < DESTINOS; i++) {
+        for (j = 0; j < VUELOS; j++) {
+            printf("Destino %d, Vuelo %d: %d plazas\n", i + 1, j + 1, ((destinos + i)->vuelos + j)->plazas);
         }
     }
 }
 
 // Mostrar pedidos rechazados
 void mostrarPedidosRechazados(Pedido* pedidos, int numPedidos) {
-    printf("\n--- Pedidos rechazados ---\n");
-    int hay = 0;
-    for (int i = 0; i < numPedidos; i++) {
-        if (pedidos[i].rechazado) {
+    printf("--- Pedidos rechazados ---\n");
+    int i;
+    bool hay;
+
+    i = 0;
+    for (i = 0; i < numPedidos; i++) {
+        if ((pedidos + i)->rechazado) {
             printf("Pedido Nro %d: %d pasajes solicitados (Destino %d, Vuelo %d)\n",
-                pedidos[i].numeroPedido, pedidos[i].cantidadPasajes,
-                pedidos[i].destino, pedidos[i].vuelo);
-            hay = 1;
+                (pedidos + i)->numeroPedido, (pedidos + i)->cantidadPasajes,
+                (pedidos + i)->destino, (pedidos + i)->vuelo);
+            hay = true;
         }
     }
     if (!hay) {
-        printf("Ningún pedido fue rechazado.\n");
+        printf("Ningun pedido fue rechazado.\n");
+    }
+}
+
+bool continuarSiNo(const char *mensaje) {
+    char seguir[3];
+    int i;
+    do
+    {
+        printf(VERDE"%s"NORMAL, mensaje);
+        fflush(stdin);
+        gets(seguir);
+        i = 0;
+        while(seguir[i] != '\0') {
+            seguir[i] = tolower(seguir[i]);
+            i++;
+        }
+        if(strcmp(seguir, "si") != 0 && strcmp(seguir, "no") != 0) {
+            system("clear");
+            printf(ROJO"DATO ERRONEO! INGRESE SI O NO\n"NORMAL);
+        }
+    }while(strcmp(seguir, "si") != 0 && strcmp(seguir, "no") != 0);
+
+    if(strcmp(seguir, "si") == 0)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+//funcion para realizar pedidios
+void realizarPedido(Pedido * pedidos, int *numPedidos) {
+
+    bool continuar;
+    continuar = true;
+
+    do {
+        system("clear");
+        printf(VERDE"--- Ingreso de pedidos ---\n"NORMAL);
+        (pedidos + *numPedidos)->numeroPedido = leerEntero(1, 9999, "Ingrese numero de pedido (1 - 999): ", "ERROR, NUMERO INGRESADO NO VALIDO (1-999)");
+        (pedidos + *numPedidos)->destino = leerEntero(1, DESTINOS, "Ingrese destino (1 - 4): ", "ERROR, NUMERO INGRESADO NO VALIDO (1 - 4)");
+        (pedidos + *numPedidos)->vuelo = leerEntero(1, VUELOS, "Ingrese vuelo (1 - 3): ", "ERROR, NUMERO INGRESADO NO VALIDO (1 - 3)");
+        (pedidos + *numPedidos)->cantidadPasajes = leerEntero(1, 500, "Ingrese cantidad de pasajes requeridos: ", "ERROR, NUMERO INGRESADO NO VALIDO (1 - 500)");
+        (pedidos + *numPedidos)->rechazado = 0; // default
+        (*numPedidos)++;
+        continuar = continuarSiNo("Ingresar otro pedido? (Si, No): ");
+        if (*numPedidos >= MAX_PEDIDOS) {
+            printf(ROJO"NO SE PUEDEN HACER MAS PEDIDOS, CANTIDAD MAXIMA DE PEDIDOS ALCANZADA\n"NORMAL);
+        }
+    } while (continuar && *numPedidos < MAX_PEDIDOS);
+
+}
+
+void enterEspera() {
+    printf("Presione ENTER para continuar...");
+    while (getchar() != '\n');
+    getchar();
+}
+
+void mostrarTodosLosPedidos(Pedido* pedidos, int numPedidos) {
+    int i = 0;
+    printf("--- Todos los pedidos ---\n");
+    if (numPedidos == 0) {
+        printf(ROJO"No hay pedidos realizados.\n"NORMAL);
+        return;
+    }
+    for (i = 0; i < numPedidos; i++) {
+        printf("Pedido Nro %d: %d pasajes solicitados (Destino %d, Vuelo %d) - %s\n",
+            (pedidos + i)->numeroPedido,
+            (pedidos + i)->cantidadPasajes,
+            (pedidos + i)->destino,
+            (pedidos + i)->vuelo,
+            (pedidos + i)->rechazado ? ROJO"RECHAZADO"NORMAL : VERDE"ACEPTADO"NORMAL);
     }
 }
