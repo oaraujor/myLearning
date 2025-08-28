@@ -1,0 +1,13 @@
+Listas Cirulares Doblemente Encadenadas
+
+Definicion:
+    Una lista circular doblemente encadenanda esta definida como una lista encadenada circular en la cual cada nodo tiene
+    dos enlaces conectandolo con el nodo anterior y el nodo siguiente.
+
+Declaracion:
+
+Operaciones:
+    - Anadir o insertar elementos
+    - Buscar o localizar elementos
+    - Borrar elementos
+    - Moverse atravez de la lista; siguiente y anterior
