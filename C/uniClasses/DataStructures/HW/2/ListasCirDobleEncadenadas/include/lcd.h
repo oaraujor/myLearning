@@ -66,11 +66,12 @@ void imprimirListaFrente(NODO **listaCircular) {
     referencia = *listaCircular;
     if (referencia != NULL){
         //no esta vacia
-        while (referencia->siguiente != *listaCircular){
+        do {
             printf("[%d]<->", referencia->valor);
             referencia = referencia->siguiente;
-        }
-        printf("[%d]\n", (referencia->siguiente)->valor);
+
+        } while (referencia != *listaCircular);
+        printf("[%d]\n",referencia->valor);
     }
     else {
         printf("Lista Circular Vacia!\n");
