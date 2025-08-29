@@ -38,7 +38,7 @@ void showMenu(const char *filename) {
     if (fileMenu != NULL){
         while(fgets(buffer, sizeof(buffer), fileMenu) != NULL) {
             if (count != 0) {
-                printf("\t%zu) ", count);
+                printf("%zu) ", count);
             }
             printf("%s", buffer);
             count++;
@@ -47,7 +47,7 @@ void showMenu(const char *filename) {
     else {
         ERROR_MSG
     }
-    printf("\n\t>>> ");
+    printf("\n>>> ");
     fclose(fileMenu);
 }
 
